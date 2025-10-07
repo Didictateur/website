@@ -1,0 +1,277 @@
+<meta charset="utf-8">
+
+Introduction
+================
+
+Il existe beaucoup de méthode dans le but de calculer la compléxiter temporelle d'un algorithme. Prenons par exemple l'algorithme de tri fusion ci-dessous décrit en pseudo-code:
+
+~~~~~~~~~~~node
+tri_fusion(L):
+    si |L| <= 1 retourner L
+    sinon
+        diviser L en deux sous listes L1 et L2
+
+        tri_fusion(L1)
+        tri_fusion(L2)
+        
+        L = fusion de L1 et L2
+~~~~~~~~~~~
+
+Notons $n$ la taille de la liste en entrée. Nous cherchons à determiner $T(n)$ la compléxité de cet algorithme en temps en fonction de $n$, la taille de l'entrée.
+
+Tout d'abord, il y a deux appelles à $tri\_fusion$, dont la compléxité en temps est $T(\frac n2)$, du au fait que la liste a étée divisée en deux. Ensuite, la fusion peut s'effectuer en temps linéaire puisque les deux listes fusionnée sont déjà triée. Il suffit alors d'ajouter à la fin de la nouvelle liste l'élément le plus petit des deux listes (qui sont donc nécessairement en tete de liste, car triée).
+
+Au final, nous obtenons la relation suivante:
+    $$T(n)=2T(\frac n2)+O(n)$$
+
+Nous nous rendons alors compte qu'il est nécessaire d'avoir des outils supplémentaires afin de pouvoir conclure. En particulier, le Master Theorem est un outils très puissant pour les relation de cette forme là.
+
+Theorème (Master Theorem)
+============================
+
+Énoncé général:
+-------------
+
+!!!
+    Soit $T$ une fonction croissante à partir d'un certain rang. S'il existe $a$ et $c > 0$ et $b > 1$ tels que:
+        - $T(n) = aT(\frac nb)+cn^k$
+    Alors:
+        - Si $a < b^k$, $T(n)=\Theta(n^k)$
+        - Si $a > b^k$, $T(n)=\Theta(n^{\log_b(a)})$
+        - Si $a=b^k$, $T(n)=\Theta(n^k\log_b(n))$
+
+!!! tip
+    Il s'agit ici de l'énoncé purement mathématique du Master Theorem, puisqu'il ny a pas nécessairement de conditions initiales, ni de condition de divisibilité par de $n$ par $b$. Cependant, en informatique, ces conditions sont nécessaire, et npous retrouverons plutôt l'énoncé suivant (justifiant la démonstration de la première condition):
+
+Énoncé informatique:
+-----------------------
+
+!!!
+    Soit $T:N\to N$ une fonction croissante à partir d'un certain rang. S'il existe $a$, $c$, $d$ et $n_0 > 0$ et $b > 1$ tels que:
+    - $T(n_0)=d$
+    - $T(n) = aT(\frac nb)+cn^k$ pour $n$ de la forme $n_0b^p$
+
+    Alors:
+    - Si $a < b^k$, $T(n)=\Theta(n^k)$
+    - Si $a > b^k$, $T(n)=\Theta(n^{\log_b(a)})$
+    - Si $a=b^k$, $T(n)=\Theta(n^k\log_b(n))$
+
+
+Intuition
+=================
+
+Ce théorème décrit comment la subdivision d'un problème affecte le temps de calcule. En particulier, lorsqu'un problème donné est subdivisé en $a$ problèmes de taille $\frac1b$, et ainsi de suite, nous construisons en réalité un arbre équilibré dont la géométrie varie en fonction de $a$ et de $b$.
+
+$\textit{Cas } a< b^k:$
+------------
+
+Voici un exemple d'illustration pour $a=2$ et $b=4$:
+
+*****************************************
+*.--------.---------.---------.--------.*
+*|        |         |         |        |*
+*'--------'---------'---------'--------'*
+*          |                 |          *
+*          |                 |          *
+*          v                 v          *
+*    .--.--.--.--.     .--.--.--.--.    *
+*    |  |  |  |  |     |  |  |  |  |    *
+*    '--'--'--'--'     '--'--'--'--'    *
+*      |       |         |       |      *
+*      |       |         |       |      *
+*      v       v         v       v      *
+*    .--.     .--.     .--.     .--.    *
+*    |  |     |  |     |  |     |  |    *
+*    '--'     '--'     '--'     '--'    *
+*****************************************
+
+Ici, nous constatons que la taille de chaque couche est drastiquement réduite lors des subdivisions. De ce fait, on "sent" bien que l'impact de la subdivision est moindre, puisque la quantité de sous-problème à traiter est relativement faible. La composante principale est donc ici le traitement du problème à la racine, laissant ainsi une compléxité en $\Theta(n^k)$.
+
+$\textit{Cas } a> b^k:$
+-------------------
+
+Voici un exemple d'illustration pour $a=4$ et $b=2$:
+
+*******************************************
+*            .-------.-------.            *
+*            |       |       |            *
+*            '-------'-------'            *
+*    |         |           |         |    *
+*    |         |           |         |    *
+*    v         v           v         v    *
+*.---.---. .---.---.   .---.---. .---.---.*
+*|   |   | |   |   |   |   |   | |   |   |*
+*'---'---' '---'---'   '---'---' '---'---'*
+* | | | |   | | | |     | | | |   | | | | *
+* | | | |   | | | |     | | | |   | | | | *
+* v v v v   v v v v     v v v v   v v v v *
+*                                         *
+*   ...       ...         ...       ...   *
+*******************************************
+
+Ici on voit bien que la largeur de l'arbre croit exponentiellement. Ce n'est donc pas le traitement du problème à la racinbe qui sera couteux, mais bien le nombre d'appel à des sous-problèmes. Ainsi, multiplier par deux l'entrée multiplie par $4$ la taille de l'arbre, et donc des calculs. Cela peut être retrouvé mathématiquement, puisque $2^{\log_2(4)}=2^2=4$.
+
+$\textit{Cas } a= b^k:$
+------------------
+
+Voici un exemple d'illustration pour $a=2$ et $b=2$:
+
+*******************************************
+*.-------------------.-------------------.*
+*|                   |                   |*
+*'-------------------'-------------------'*
+*          |                   |          *
+*          |                   |          *
+*          v                   v          *
+*.---------.---------.---------.---------.*
+*|         |         |         |         |*
+*'---------'---------'---------'---------'*
+*     |         |         |         |     *
+*     |         |         |         |     *
+*     v         v         v         v     *
+*.----.----.----.----.----.----.----.----.*
+*|    |    |    |    |    |    |    |    |*
+*'----'----'----'----'----'----'----'----'*
+*******************************************
+
+Ici, nous obtenons un arbre binaire équilibré. De ce fait, la compléxité du calcul est similaire que le traitement d'un arbre équilibré, donc la compléxité est en $\Theta(n^k)$ pour chaque couche, multiplié par le nombre couche qui est en $\Theta(\ln(n))$. Ainsi, on obtient bien une compléxité en $\Theta(n^k\ln(n))$
+
+Preuve
+=================
+Pour commencer, nous pouvons constater que $T(\frac nb)$ appelle derrière $T(\frac n{b^2})$ lui-même apellant lui-même $T(\frac n{b³})$ etc... Ainsi, la suite géométrique $(b^pn_0)_{p\ge 0}$ apparait naturellement dans l'analyse de cette fonction. Nous commencerons donc par démontrer le théorème sur ce cas particulier, ce qui nous permettra de généraliser pour n quelconque.
+
+$\textit{Situation }n=b^pn_0:$
+----------------------------------
+
+Nous noterons par la suite $n_p=b^pn_0$. Pour procéder par récurrence, il nous faut tout d'abord une formule explicite en fonction de $p$. Pour se faire, nous pouvons remarquer que:
+
+$$T(n)=aT(\frac nb)+cn^k=a^2T(\frac{n}{b^2})+ac(\frac{n}{b})^k+cn^k\\=a^2T(\frac{n}{b^2})+ac(\frac{n}{b})^k+a^0c(\frac n{b^0})^k\\$$
+
+Ainsi, nous sentons bien qu'en réitérant, nous devrions optenir une formule de la forme $T(n)\sim a^pT(\frac{n}{b^p})+\sum_{i=0}^{p-1}{a^ic(\frac{n}{b^i})^k}\sim da^p+\sum_{i=0}^{p-1}{ca^i(\frac{n_p}{b^i})^k}$
+
+Nous allons donc montrer par récurrence sur $p$ que $$T(n_p)=da^p+\sum_{i=0}^{p-1}{ca^i(\frac{n_p}{b^i})^k}$$
+
+- Initialisation:
+
+    Nous avons d'une part: $T(n_0)=d$ par définition
+
+    Et d'autre part: $da^0+\sum_{i=0}^{0-1}{ca^i(\frac{n_0}{b^i})^k}=d$
+
+    Le résultat est donc vrai pour $p=0$.
+
+- Récurence:
+    
+    Supposons le résultat vrai au rang $p$. Alors:
+    $$T(n_{p+1}) = aT(\frac {n_{p+1}}b)+{n_{p+1}}^k\textit{ par définition de T}\\
+        = aT(n_p)+{n_{p+1}}^k\textit{ car }b*n_p=n_{p+1}\\
+        = a*da^p+a*\sum_{i=0}^{p-1}{ca^i(\frac{n_p}{b^i})^k}+cn_{p+1}^k\textit{ par hypothèse de récurence}\\
+        = da^{p+1}+\sum_{i=0}^{p-1}{ca^{i+1}(\frac{n_{p+1}}{b^{i+1}})^k}+cn_{p+1}^k\\
+        = da^{p+1}+\sum_{j=1}^{p}{ca^j(\frac{n_{p+1}}{b^j})^k}+cn_{p+1}^k\textit{ avec le changement d'indice }j=i+1\\
+        = da^{p+1}+\sum_{j=0}^{p}{ca^j(\frac{n_{p+1}}{b^j})^k}\textit{ en remarquant que } cn_{p+1}^k = c(\frac{n_{p+1}}{b^0})^k$$
+
+Nous avons donc bien montré la formule par récurrence sur $p$. Nous pouvons dès lors travailler sur cette dernière. Pour commencer, nous pouvons isoler $n_p$ pour obtenir:
+
+    $$T(n_p)=da^p+c{n_p}^k\sum_{i=0}^{p-1}{(\frac{a}{b^k})^i}=\delta(p)+c{n_p}^k\gamma(p)$$
+
+avec
+
+    - $\delta(p)=da^p=da^{\log_b(\frac {n_p}{n_0})}=d{a^{\log_b(n_p)}}/{a^{\log_b(n_0)}}=d{b^{\log_b(a)\log_b(n_p)}}/{a^{\log_b(n_0)}}=d{{n_p}^{\log_b(a)}}/{a^{\log_b(n_0)}}=\Theta({n_p}^{\log_b(a)})$
+
+    - $\gamma(p)=\sum_{i=0}^{p-1}{(\frac{a}{b^k})^k}$
+
+Nous pouvons ainsi reconnaitre une somme géométrique de raison $\frac a{b^k}$ dont la valeur varie:
+
+    - Si $a < b^k$, alors la série géométrique converge et:
+
+            $$\gamma(p)=\sum_{i=0}^{p-1}{(\frac{a}{b^k})^k}=\frac{1-(\frac{a}{b^k})^p}{1-\frac a{b^k}}\le\frac1{1-\frac a{b^k}}=\Theta(1)$$
+
+        Nous avons alors:
+
+            $$\underline{T(n_p)}=\Theta({n_p}^{\log_b(a)})+\Theta({n_p}^k)=\underline{\Theta({n_p}^{k})}\textit{ car }\log_b(a) < k$$
+    - Si $a > b^k$, alors la série diverge et:
+
+            $$\gamma(p)=\sum_{i=0}^{p-1}{(\frac{a}{b^k})^k}=\frac{(\frac{a}{b^k})^p-1}{\frac a{b^k}-1}\sim\frac{(\frac{a}{b^k})^p}{\frac a{b^k}-1}=\frac{1}{\frac a{b^k}-1}(\frac{a}{b^k})^p$$
+
+        Or:
+
+            $$c{n_p}^k(\frac{a}{b^k})^p=c(\frac{n_p}{b^p})^ka^p=c{n_0^k}a^p=\Theta({n_p}^{\log_b(a)})$$
+
+        Ainsi:
+
+            $$\underline{T(n_p)=\Theta({n_p}^{\log_b(a)})}$$
+
+
+    - Si $a = b^k$, alors:
+
+            $$\gamma(p)=p=\Theta(\log_b({n_p}))$$
+
+        Ainsi:
+        
+            $$\underline{T(n)}=\Theta({n_p}^{\log_b(a)})+\Theta(n_p^k\log_b({n_p}))=\underline{\Theta(n_p^k\log_b({n_p}))}$$
+
+
+$\textit{Situation }n\in N:$
+---------------------------------
+
+Le théorème étant démontré pour les termes d'une suite géométrique, il ne suffit plus qu'à montrer que le résultat reste vrai lorsque n est quelconque. Pour se faire, il suffit en réalité d'encadre l'entier n antre deux termes consécutifs de la suite géométrique $(n_0b^p)_{p\ge 0}$.
+
+Soit donc $n\ge n_0$. Il existe $p\in N$ tel que $n_0b^p\le n< n_0b^{p+1}$. Soit un tel $p$. Puisque $T$ est croissante à partir d'un certain rang, alors pour $n$ assez grand:
+    
+    $$T(n_0b^p)\le T(n)< T(n_0b^{p+1})$$
+
+Or, si $T(n_p)=\Theta(f(n_p))$, alors il existe $k_1, k_2>0$ tels qu'à partir d'un certain rang:
+    $$k_1f(n_p) \le T(n_p)\le T(n)< T(n_{p+1})\le k_2f(n_p)$$
+Ce qui nous permet d'en déduire directement $T(n)=\Theta(f(n_p))=\Theta(f(n))$
+
+Cela conclue la démonstration du théorème.
+
+
+Intuition
+==================
+
+Par l'apparition de la suite $(n_0b^p)_{p\ge0}$ et la comparaison de $n$ avec les termes de cette suite, nous nous rendons compte que la démonstration se base en partie sur l'ordre de grandeur de $n$ dans la base $b$. Ainsi, lors de l'étude des deux termes $aT(\frac nb)$ et $cn^k$, il s'agit de savoir quel terme "prédomine" lorsque l'on considère la base $b$. Or, en calculant $T(bn)$ (simplement la puissance suivante en base $b$), nous nous rendons compte que les deux termes deviennent $aT(n)$ et $cb^kn^k$. De ce fait, il est maintenant visible que les valeurs déterminante pour savoir quel terme "prédomine" sont $a$ et $b^k$, expliquant ainsi les disjonctions de cas:
+
+- si $a< b^k$, alors le terme "prédominant" est $cn^k$, nous donnant directement $\Theta(n^k)$
+- si $a>b^k$, alors le sencond prédomine, nous laissant ainsi $aT(\frac nb)$. Ici, nous pouvons facilement montrer que $T(n_p)=a^pn_0$ et $a^p=\Theta(n^{\log_b(a)})$
+- si $a=b^k$, ce cas est plus délicat, car aucun des terme ne "prédomine" l'autre. Nous somme alors dans une situation semblable au traitement d'un arbre b-naire équilibré. Ainsi, la compléxité est en $n\log(n)$. En considérant ainsi la puissance $n^k$ et la base $b$, nous obtenons $\Theta(n^k\log_b(n))$
+
+
+Exemple
+=====================
+
+Considérons l'algorithme vu en in troduction. Nous savons que sa compléxité en temps vérifie l'égalité suivante:
+    $$T(n)=2T(\frac n2)+O(n)$$
+Nous avons alors:
+    - a = 2
+    - b = 2
+    - k = 1
+Et donc $2=2^1$, nous donnant comme complexité $T(n)=O(n\log_2(n))$. Il s'agit de la complexité optimale pour un algorithme de trie.
+
+
+Exercice
+=====================
+
+Tri-fusion
+---------
+Nous considérons une modification de l'algorithme de tri fusion: plutôt que de diviser la liste en deux, nous la disivons dorénavant en trois. Quel est la nouvelle complexité de l'algorithme ?
+
+m-fusion
+----------
+Même question pour une subdivision de la liste en m sous-liste. Quels sont les avantages et inconvénients d'un tel algorithme ?
+
+Strassen
+-----------
+Nous considérons maintenant la multipliation de matrice.
+
+- Rappeller la compléxité d'un produit de matrice classique.
+- Démontrer la compléxité d'un produit de matrice suivant l'<a href="https://fr.wikipedia.org/wiki/Algorithme_de_Strassen">algorithme de Strassen</a>
+
+
+
+
+
+
+
+
+
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script src="https://morgan3d.github.io/markdeep/latest/markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

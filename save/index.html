@@ -1,0 +1,606 @@
+<meta charset="utf-8">
+
+
+# Sources
+
+Toutes les images utilisées ici ont été réalisées par [Axelle Geyre](https://axellegeyre.com/), et sont disponible directement sur [https://zes.sx/riichi](https://zes.sx/riichi) mettant à disposition des fiches récapitulatives:
+- [d'initiation](https://zes.sx/riichi/doc/initiation-v1.2-fr.pdf)
+- [du calcul du score](https://zes.sx/riichi/doc/score-v1.1-fr.pdf)
+- [des différents Yakus](https://zes.sx/riichi/doc/yakus-v1.5-fr.pdf)
+
+# Présentation
+
+Le riichi mahjong est une variante japonaise du mahjong.
+Il s'agit d'un jeu qui se joue principalement à 4, mais il en existe des variantes pour 3 ou 5 joueurs.
+Cependant, cela sera seulement discuté en ouverture.
+Le principe du jeu peut être rapproché au Poker, Rummikube ou même le Tarot dans sa manière de jouer.
+
+# Mode de jeu
+
+Chacun des 4 joueurs à un rôle particulier en fonction de sa place autour de la table: un vent lui est attribué.
+
+Placement des vents (Optionnel)
+--------
+Les 4 joueurs, formant un carré, se voient attribués une direction parmi *Nord*, *Sud*, *Est* et *Ouest*.
+Le *Nord* et le *Sud* se font face tout comme l'*Est* et l'*Ouest*.
+
+!!! warning
+    Attention cependant: il faut imaginer le jeu comme étant une carte céleste.
+    De ce fait, le joueur au *Sud* à l'*Est* à sa gauche, et l'*Ouest* à sa droite.
+
+****************
+*
+*    Nord
+*      |
+* Est--+--Ouest
+*      |
+*     Sud
+*
+****************
+$$\textit{Distribution des vents en fonction du placement des joueurs, vu de dessus}$$
+
+Fonctionnement d'une manche
+----------
+À chaque manche, chacun se voit distribuer 13 tuiles: cela constitue sa main (il est le seul à la connaître).
+Chaque joueur joue dans l'ordre anti-horaire, en commençant par l'*est* (le joueur dont le vent qui lui est attribué est l'*est*).
+Pendant le tour d'un joueur, celui-ci commence par récupérer une nouvelle tuile (soit dans la pioche, soit autrement), puis en défausse une devant lui.
+De ce fait, un joueur a toujours une main représentée par 13 tuiles.
+
+![Exemple de partie sur mahjongo.com](data/example.gif)
+
+La fin d'une manche se termine lorsqu'un joueur gagne ou qu'il y a égalité.
+Les perdants donnent alors un certain nombre de leur point aux gagnants.
+
+Fonctionement d'une partie
+--------
+Une partie peut se déroule canoniquement en 8 manches: 4 manches d'*Est* et 4 manches de *Sud*.
+Cependant, nous considérerons pour la suite uniquement la variante à 4 manches, dans la mesure où cela n'est pas nécessaire à la compréhension du jeu.
+En revanche, cela sera expliqué en ouverture.
+À la fin de chacune d'elles, les vents tournent:
+- l'*Est* devient le *Nord*
+- le *Nord* devient l'*Ouest*
+- l'*Ouest* devient le *Sud*
+- le *Sud* devient l'*Est*
+Dit autrement, les vents tournent dans le sens antihoraire.
+Lorsque chaque joueur à fini sa manche en tant qu'*Est*, la partie s'arrête.
+
+!!! Warning
+    Il existe cependant une exeption: si à la fin d'une manche, le joueur à l'*Est* gagne, il y a une répétition sans que les vents ne tournent.
+    Ainsi, il est tout à fait possible d'envisager une partie en 4 manches qui se termine en réalité après une dizaine de manche.
+
+Le role de l'est
+-------
+Le joueur à l'*Est* a un rôle particulier.
+En plus d'être toujours le premier à commencer et de recommencer une manche en cas de victoire, il a en plus deux autres particularités:
+- Son vent (*Est*) est le vent dominant (cf yakus)
+- Il gagne plus de points, mais en perd également plus
+
+!!! Tip
+    Durant une partie physique, l'*Est* décide également où commence la pioche avec des dés, et est le premier à piocher sa main initiale.
+
+Tuiles
+=========
+L'ensemble des tuiles peut être divisé en deux:
+- Les familles, elles-mêmes divisées en trois familles:
+	- Les *Caractères* (ou *Man*)
+	- Les *Bambous* (ou *Sou*)
+	- Les *Ronds* (ou *Pin*)
+![](famille.png)
+
+- Les honneurs, eux-mêmes divisés en deux groupes:
+	- Les *Vents*
+	- Les *Dragons*
+![](honneur.png)
+
+!!! Note
+    Chaque tuile est présente en exactement 4 exemplaires. Ainsi, il y a un total de 136 tuiles dans le jeu et initialement 70 tuiles dans la pioche.
+
+Main valide
+=========
+Maintenant que l'on sait **comment** jouer, il est nécessaire de savoir **quoi** jouer.
+En particulier, dans le but de gagner, il faut que la main respecte deux conditions en même temps:
+- Elle doit être valide
+- Elle doit être gagnante
+Dans cette partie, nous discuterons des mains valides.
+
+Forme classique
+--------
+Dans la majorité des cas, une main valide prend toujours la même forme, à deux exceptions près (cf yakus).
+Une telle main possède:
+- une paire (exactement la même tuile) (appelée *Toitsu*)
+    ![Exemple de paire](paire.png)
+- quatre groupes de trois tuiles
+Un groupe de trois tuiles peut être formé de deux manières différentes:
+
+- En formant une suite de chiffres consécutives (appelée *Chii*)
+
+    ![Exemple de suite](chii.png)
+
+- En formant un groupe de trois tuiles identiques (exactement la même tuile) (appelée *Pon*)
+
+    ![Exemple de brelan](pon.png)
+
+!!!
+    Les *Vents* et les *Dragons* ne peuvent pas former de suite.
+
+![Exemple de main](data/tenpai3.png)
+Danse l'exemple ci-dessus, nous pouvons constater qu'il y a un brelan de *5 de Bambou*,
+et une suite de *Pin* (les 7, 8, 9) à droite.
+Cela fait donc 2 groupe de trois parmi les 4 qu'il faut former pour avoir une main valide.
+
+Dans ce même exemple ci-dessus, quelles sont les tuiles qui permettent d'avoir une main valide ?
+
+<details>
+    <summary>Cliquer pour voir la réponse</summary>
+Actuellement, les groupes formés sont:
+- Une suite de *Caractères* (7, 8, 9 à gauche)
+- Un brelan de *5 de Bambou*
+- Une suite de *Pin* (7, 8, 9 à droite)
+
+Et la paire:
+- Une paire de *1 de Caractère* (sur la gauche)
+
+Il ne manque ainsi qu'un seul groupe de trois pour avoir une main valide.
+Avoir un *1 de Bambou* ou un *4 de Bambou* permet de compléter la suite au milieu (1, 2, 3 ou 2, 3, 4), et donc le quatrième bloc,
+et donc d'avoir une main valide.
+
+</details>
+
+Tenpai
+-------
+Si vous avez bien fait attention, vous remarquerez qu'une main valide comporte en tout 14 tuiles, alors qu'une main en comporte habituellement 13.
+Cela signifie qu'une main est valide uniquement lors de la récupération d'une tuile (en piochant par exemple, une main comporte 14 tuiles avant défausse).
+Si un joueur est à une seule tuile d'avoir une main valide, on dit alors qu'il est en *Tenpai*: une tuile le sépare de la victoire.
+
+![Exemple de main en Tenpai](data/tenpai.png)
+
+Dans l'exemple ci-dessus, seule le *6 de Bambou* permet de rendre la main valide.
+
+![Exemple de main en Tenpai](data/tenpai2.png)
+
+Dans cet exemple très similaire, pourquoi la main est-elle toujours en *Tenpai* ?
+
+<details>
+    <summary>Cliquer pour voir la réponse</summary>
+Sur toute la partie gauche (les *Caractères*), nous pouvons discerner:
+- Une suite (1, 2, 3)
+- Une suite (4, 5, 6)
+- Une paire (7, 7)
+
+Donc parmi les bambous, il faut trouver 2 blocs de trois.
+Le tri peut être piégeux, car nous pouvons former:
+- une suite (7, 8, 9)
+- un début de suite (7, 8)
+
+Ainsi, le *6 de Bambou* et le *9 de Bambou* permettent tout deux de compléter cette suite et d'avoir une main valide.
+Même si cela semble moins évident, la main est bien en *Tenpai*.
+
+!!! Tip
+    Ici, nous nous rendons compte même que le nombre de tuiles permettant de rendre la main valide à augmenter.
+    Cette situation est donc plus avantageuse que la précédente.
+</details>
+
+Égalités
+-------
+Lorsqu'il n'y a plus de pioche (ce qui peut arriver), la manche s'arrête.
+Chaque joueur, en commençant par l'*Est* annonce s'il est en *Tenpai* - en dévoilant son jeu - ou non - en couchant son jeu.
+Les joueurs en situation de *Tenpai* sont gagnants, les autres perdants.
+
+!!! Note
+    Dans cette situation, tout ce qui importe est de savoir si la main est sur le point d'être valide ou non.
+    Il n'y a aucune notion de main gagnante, et il peut donc être stratégique en fin de partie de chercher à se mettre en *Tenpai*, sachant qu'il n'est pas possible de gagner autrement que part l'égalité.
+
+Main gagnante
+=========
+Comme précisé précédemment, avoir une main valide ne suffit pas: il faut également une main gagnante qui respecte au moins une condition de victoire.
+Dit autrement, en plus de la forme, la main doit se démarquer.
+
+Les *Yakus* sont ces conditions de victoires. Il s'agit de particularités qui rendent une main unique et spéciale.
+Par exemple, avoir un brelan de *Dragon* est un *Yaku*.
+N'avoir que des *Bambous* dans son jeu en est un autre.
+
+Les *Yakus* les plus communs sont présentés et expliqués plus en détails un peu plus loin.
+
+Chii/Pon
+==========
+Lorsqu'un joueur doit jouer, il doit commencer par récupérer une tuile, comme déjà expliqué.
+Cependant, il n'est pas obligé de récupérer une tuile dans la pioche.
+
+Chii
+--------
+Si, lors de son tour, la dernière tuile défaussée lui permet de compléter une suite (*Chii*), il peut alors la récupérer à la place de la pioche.
+Cela se fait alors en trois étapes:
+- Le joueur annonce "Chii"
+- Il dévoile sa suite et la met de côté, face découverte
+- Il défausse une tuile
+
+!!! Tip
+    En anglais, le terme est "Chow".
+
+![Exemple de *Chii* sur Mahjongo.com](data/chii.gif)
+
+Dans l'exemple ci-dessus, le joueur qui précède a défaussé un *8 de Caractère*,
+qui est la tuile permettant de compléter une suite.
+Il est alors possible dans ce cas d'appeler un "Chii".
+
+Pon
+------
+Si, lors d'un défausse quelconque, une tuile lui permet de compléter un brelan (*Pon*), il peut alors faire de même:
+- Le joueur annonce "Pon"
+- Il dévoile son brelan et la met de côté, face découverte
+- Il défausse une tuile
+
+!!! Warning
+    Le joueur annonçant un *Pon* peut le faire derrière n'importe quelle défausse.
+    Cela signifie que le jeu reprend par sa défausse, et le tour de certains joueur peuvent être sauté.
+
+![Exemple de *Pon* sur mahjongo.com](data/pon.gif)
+
+Dans l'exemple ci-dessus, le joueur à droite à défaussé un *Dragon rouge*.
+Puisque cela permet de compléter un groupe de trois (cici un brelan), alors un *Pon* est possible.
+Dans ce cas, la tuile est récupérer, et le tour du joueur en face et du joueur à gauche sont sautés.
+
+!!! Tip
+    Dans une partie physique, le joueur annonçant "Chii" ou "Pon" dévoile ses deux tuiles, défausse, puis seulement récupère la tuile.
+    Cela permet de fluidifier la partie.
+
+Ron
+------
+Lorsqu'un joueur est en *Tenpai* est a ou attend au moins un *Yaku*, il est alors en attente de la bonne tuile pour gagner.
+Dans ce cas, à l'instant où elle est défaussée, le joueur en situation de *Tenpai* peut s'écrier "Ron !". Dès lors, il dévoile son jeu et gagne la manche. Le joueur ayant défaussé la tuile gagnante est lui en revanche le grand perdant.
+Il faut donc faire très attention de ne pas défausser la tuile gagnante de quelqu'un d'autre, au risque d'en payer le prix.
+Les autres joueurs en revanche sont neutre dans cette situation et ne gagnent ni perdent de points.
+
+!!! Note
+    Si une tuile permet à plusieurs personnes de gagner, alors le joueur ayant défaussé leur tuile gagnante se prend une double ou triple pénalité, car il doit distribuer ses points à tous ceux qui ont fait un "Ron" individuellement.
+
+!!! Note
+    S'il y a des conflits - un "Chii" en même temps qu'un "Pon", par exemple - , la priorité est au "Ron", puis au "Pon" puis au "Chii".
+    Remarque: il ne peut y avoir plusieurs "Ron" ou plusieurs "Chii" en même temps.
+
+Tsumo
+-----
+Si un joueur récupère une tuile gagnante en piochant, il peut alors annoncer "Tsumo".
+Dès lors, il gagne la manche et tous les autres joueurs sont perdants.
+
+Furiten
+---------
+Une des subtilités du jeu est de restreindre les conditions de victoire dans un cas précis:
+lorqu'un joueur est en *Tenpai*, et qu'il a défaussé à un moment de la partie une tuile qui le ferait gagner, il est alors en situation de *Furiten*.
+Cela signifie qu'il est dans l'interdiction de "Ron".
+Cependant, il a toujours la possibilité de faire "Tsumo", même si cela limite fortement ses chances de victoire.
+
+Main ouverte/fermée
+--------
+Une notion très importante du Riichi Mahjong est l'ouverture de la main.
+Une main est dite ouverte lorsqu'un joueur a effectué un appel (un "Chii", un "Pon").
+Autrement dit, lorsqu'un joueur à dévoilé une partie de son jeu, sa main est ouverte.
+Dans le cas contraire, sa main est fermée.
+
+L'interrêt d'ouvrir sa main est de pouvoir récupérer des tuiles qui nous arrangent, nous offrant donc plus de facilité pour obtenir une main valide et gagnante.
+Cependant, une main fermée étant plus dure à réalisée (car uniquement formée de tuiles piochées) implique plus de points en cas de victoire.
+
+Ainsi, les joueurs ont tendance à tarder au maximum l'ouverture de leur main.
+
+!!! Warning
+    Certaines conditions de victoires (*Yakus*) ne sont réalisables qu'avec une main fermée.
+    Tous les *Yakus* sont réalisables en main fermée. 
+
+!!! Warning
+    Lorsque des tuiles sont dévoilées par un "Chii" ou un "Pon" par exemple, elles sont mises de côté, et il n'est alors plus possible de les toucher.
+    Il est donc nécessaire de mûrement réfléchir à ses appels pour s'éviter de se supprimer des conditions de victoire.
+
+Kan
+=====
+Une situation qui a été jusque là tue est le cas où un joueur a ou peut avoir 4 tuiles identiques.
+Dans ces cas là, s'il souhaite le traiter comme un carré, a trois possibilités:
+
+Kan ouvert
+--------
+Si le joueur possède un brelan d'une tuile dans son jeu, et que la quatrième est défaussée, il peut annoncer "Kan".
+Il récupère alors la tuile et les mets de côté, face découverte.
+
+Kan fermé
+--------
+S'il possède déjà dans son jeu 4 tuiles identiques, il peut, s'il le souhaite, l'annoncer en disant "Kan".
+Ses quatres tuiles sont alors mises de côtés avec:
+- deux des tuiles face découverte
+- deux des tuiles face cachée
+Ce procéder permet de rappeler que ce "Kan" est un *Kan fermé*.
+Autrement dit, si la main du joueur n'a pas encore été ouverte, on considérera qu'elle est toujours fermée.
+Ce *Kan*, venant de sa propre main, ne restreint donc pas les *Yakus* qu'il peut réaliser.
+
+Pon amélioré
+-------
+Si un joueur pioche une tuile qu'il a déjà "Pon" dans un précédent tour, il peut alors l'anoncer.
+Il prononce donc "Kan", dévoile sa tuile qu'il met face découverte avec les autres.
+
+!!! Note
+    Dans tous les cas, un *Kan* est considéré comme un brelan.
+    Ainsi, annoncer un "Kan" revient au même pour le joueur que d'annoncer un "Pon"
+    Cela signifie que lorsqu'un joueur annonce un "Kan", il doit piocher de nouveau.
+    Auquel cas, il lui serait impossible d'avoir une main valide.
+
+!!!!
+    L'intérrêt du *Kan* sera discuté un peu plus loin lorsque nous aborderons la notion de *Dora*.
+
+!!! Tip
+    En anglais, le terme associé est "Kong"
+
+![Exemple de *Kan* ouvert sur mahjongo.com](data/kan.gif)
+Dans l'exemple ci-dessus, le joueur à gauche a défaussé un *9 de Bambou*.
+Puisque cela permet de former un *Kan*, l'appel est possible.
+Le reste est alors similaire à un *Pon*.
+
+Quelques Yakus
+===========
+Il est maintenant nécessaire de parler du sujet qui fâche: les *Yakus*.
+L'une des compléxités du jeu provient de son nombre de *Yakus*: 39.
+Ce nombre peut changer selon les règles: il peut varier s'il l'on considère les règles européenes ou japonaises.
+Selon les platformes, les règles peuvent également changer, afin d'assurer par exemple qu'un partie ne puisse pas durer éternellement.
+
+Cependant, il n'est pas nécessaire de prendre peur.
+Dans le cas général, une douzaine de *Yakus* est suffisant pour profiter pleinement du jeu.
+Les *Yakus* restant sont soit des *Yakus* extrêmement rares, soit des formes de redondance.
+
+Yakus communs
+-------
+Parmis les plus communs, nous pouvons retrouver ceux ci-dessous:
+
+### *Riichi*
+Le *Riichi* est ce qui fait la spécificité de ce jeu (d'où son nom).
+Ce *Yaku* peut en revanche être effectué **uniquement en main fermée**.
+S'il y a eu un appel, il n'est plus possible de le faire (d'où la prudence lors d'appels).
+
+Lorsqu'un joueur à une main fermée, et qu'il est en situation de *Tenpai* lors de son tour, il peut annoncer "Richi".
+Dès lors, il défausse une tuile, et se met en attente:
+sa main ne peut alors plus être changée.
+Autrement dit, soit il finit par piocher la tuile qu'il a décidé d'attendre (*Tsumo*),
+soit un joueur finit par la défausser (*Ron*).
+
+!!! Warning
+    Cela implique que le joueur ne choisit pas sa défausse, puisque ça main ne peut plus changer.
+    Cela lui rapporte des points en cas de victoire, mais l'expose au risque de défausser la tuile gagnante d'un autre joueur.
+
+### *Ippatsu*
+L'*Ippatsu* est une condition qui se rajoute à la précédente.
+Lorsqu'un joueur annonce "Riichi", la prudence est alors de mise pendant un tour:
+si d'ici à ce qu'il rejoue, il "Ron" ou "Tsumo" sans interruption - sans "Chii" ni "Pon" -, donc dans la foulée,
+cela lui rajoute un *Yaku* supplémentaire.
+
+### *Vent dominant*
+Si un joueur obtient un brelan de vent dominant - en général l'*Est* - , cela lui fait un *Yaku*, que sa main soit ouverte ou non.
+Il s'agit d'un *Yaku* facile à faire et assure donc une condition de victoire, mais vaut en contrepartie que peu de point.
+
+### *Vent du joueur*
+Si un joueur obtient un brelan de son propre vent, cela lui fait un *Yaku*, que sa main soit ouverte ou non.
+Un brelan de *Nord* assure au joueur *Nord* une condition de victoire, mais n'assure rien du tout au joueur *Sud* par exemple.
+
+!!!
+    Si le joueur à l'*Est* fait un brelan de vent d'*Est*, cela lui assure alors deux *Yakus*:
+    - brelan de vent dominant
+    - brelan de son propre vent
+
+### *Tout ordinaire*
+Si la main du joueur ne contient aucun terminal (ni de 1, ni de 9) et aucun honneur (ni de vent, ni de dragon),
+cela lui ocrtoît un *Yaku*, que sa main soit ouverte ou non.
+
+### *Tout triple*
+Si tous les groupes de trois d'une main sont des brelans, un *Yaku* est alors réalisé, que la main soit ouverte ou non.
+
+### *Main semi-pure*
+Une main est dite *semi-pure* si elle est composée d'honneurs (vent ou dragon) et d'une seule famille.
+Dès lors que la main contient deux tuiles de famille différente, elle n'est pas semi-pure.
+
+### *Main pure*
+Une main est par extension *pure* si elle n'est composée que d'une seule famille (donc sans honneur).
+
+### *Suite pure*
+Une suite pure est une suite entière (toutes les tuiles de 1 à 9) de la même famille.
+
+### *Triple brelan*
+Si le joueur possède un brelan du même chiffre dans les trois familles, il réalise alors un *Yaku*, que son jeu soit ouvert ou non.
+
+### *7 paires*
+Les *7 paires* est la première des deux exceptions sur les conditions de validité d'une main.
+Comme sont nom l'indique, il s'agit tout simplement d'avoir une main composée uniquement de paire.
+
+!!! Warning
+    Il n'est pas possible d'avoir de *Kan* pour ce *Yaku*.
+    Autrement dit, toutes les paires doivent être distinctes.
+
+!!!
+    Puisque l'ouverture d'une main se fait par des appels,
+    et que les appels impliquent d'avoir un groupe de trois,
+    alors ce *Yaku* implique d'avoir une main fermée.
+
+## Autres yakus
+Il existe de nombreux autres *Yaku*, cependant, beaucoup sont soit redondants, soit quasiment impossibles à réaliser.
+En voici quelques exemples:
+
+### *Petit vent*
+Ce *Yaku* est réalisé lorsque le joueur possède trois brelans de vent et une pair du quatrième.
+
+### *Grand vent*
+La seule différence avec le *Yaku* précédent est que le joueur doit posséder un brelan de tous les vents.
+
+!!!
+    La même règle s'applique pour *Petit dragon* et *Grand dragon*.
+    Cela consitue donc quatre *Yakus* fortement semblables.
+     
+### *Bénédiction du ciel*
+Ce *yaku* est réalisé lorsque le joueur *Est* gagne la manche sur sa toute première pioche.
+
+!!!
+    Il va sans dire que ce dernier est exceptionnellement rare.
+
+### *13 orphelins*
+Il s'agit de la deuxième exception sur la condition de validité de la main.
+Ce *Yaku* est réalisé lorsqu'une main contient un exemplaire de chaque terminaux (1 et 9), de chaque vent et de chaque dragon, sans compter la réalisation d'une paire.
+
+Une liste exaustive des *Yakus* peut être trouvée [ici](Yakus.pdf).
+
+Dora
+========
+Parlons maintenant d'un sujet croustillant: les *Doras*.
+Un dora est une tuile qui, lorsqu'un joueur la possède dans sa main lors de sa victoire, lui ocroît des points supplémentaires.
+
+Dora
+------
+En début de partie , une tuile est découverte (et elle ne bougera pas de son emplacement).
+Cette tuile est l'*indicateur de dora*.
+Cela signifie que la tuile suivante dans un cycle est un *Dora*.
+
+![Cycle des tuiles](dora.png)
+
+Par exemple, si l'indicateur est un **9 de Pin**, la *dora* est alors le **1 de Pin**.
+Si l'indicateur est le **Dragon rouge**, alors la *Dora* est alors le **Dragon blanc**.
+
+!!!
+    Initialement, il y a 4 *Doras* dans le jeu.
+
+C'est alors que les *Kans* prennent tout leur intérêt !
+Lorsqu'un joueur annonce un *Kan*, un nouvel indicateur est dévoilé. 
+Il ne peut cependant y avoir qu'au plus 4 *Indicateurs de Dora* au total.
+
+!!!
+    Si deux *Indicateurs* sont identiques, alors la *Dora* correspondante compte pour double.
+
+Ura dora
+-----
+Lorsqu'un joueur gagne en ayant fait "Riichi", alors pour chaque *Indicateur de Dora*, un *Indicateur de Ura Dora* est dévoilé.
+Ces derniers ont exactement les mêmes rôles que les *Doras*, mais ne sont dévoilés qu'une fois la victoire annoncée, et ne bénéficient qu'aux joueurs ayant gagné avec un "Riichi".
+
+Dora rouge
+-----
+Les *Doras rouges* ou les *Cinq rouges* (appelés *Red Five*) sont des tuiles qui se démarquent par leur couleur rouge.
+Il y en a exactement trois:
+- Un cinq de *Pin* (*Rond*)
+- Un cinq de *Man* (*Caractère*)
+- Un cinq de *Sou* (*Bambou*)
+
+!!!
+    Cela ne change en rien le nombre de cinq dans le jeu:
+    il y a par exemple 3 cinq de *Pin* normaux plus un cinq de *Pin* rouge.
+
+Comme son nom l'indique, ils agissent exactement de la même manière que les *Doras*.
+
+!!! Tip
+    Dans les règles européennes, les *Doras rouges* ne sont pas présents.
+    Cependant, il est tout de même courant de jouer avec pour des parties plus intenses.
+
+Introduction aux points
+==========
+Le système de point est sans aucun doute la partie la plus complexe du jeu pour les nouveaux joueurs.
+Cependant, il est nécessaire de comprendre comment fonctionne ce système afin d'évaluer une main.
+
+En particulier, si un joueur à une main avec énormément de point, il peut vouloir prendre le risque de rester en *Tenpai*, même si cela signifie défausser des tuiles potentiellement gagnantes pour autre joueur.
+À l'inverse, si l'ouverture d'un joueur semble montrer une très grosse main, les joueurs avec une très petite main peuvent décider d'abandonner l'idée de victoire pour éviter de perdre la moitié de leurs points.
+
+Il est donc temps d'introduire deux notions: les *Fus* et les *Hans*.
+
+## *Fu*
+Les *Fu* sont des points accumulés lorsqu'une main contient des configurations intéressantes comme des brelans, des brelans fermés, des dragons etc...
+Ces derniers sont arrondis à la dizaine supérieure.
+Ainsi, avoir 31 ou 40 *Fus* ne change en rien le score final.
+
+## *Han*
+Les *Hans* en revanche sont notamment accumulés par les *Yakus*.
+Ainsi, un triplet de dragon correspond à *1 Han*, alors q'une main pure fermée correspond à *6 Hans*, car beaucoup plus dure à réaliser.
+Chaque *Dora* fournie également *1 Han*.
+
+Le calcul des points se fait via la formule:
+
+$$Fu*2^{Han+2}$$
+
+En réalité, d'autres paramètres entrent en jeu: est-ce que le joueur qui gagne ou perd est *Est* ou non par exemple.
+Cependant, cela permet de bien comprendre l'importance des *Hans*.
+Alors que gagner des *Fus* supplémentaires peut être fastidieux pour ne pas ou quasiment pas changer le score, avoir un *Han* supplémentaire permet de le doubler.
+
+Distribution des points
+-----
+Au début, chaque joueur commence avec 30 000 ou 25 000 points selon les règles.
+Tout au long de la partie, la somme des points de tous les joueurs reste constant.
+Autrement dit, le calcul des points permet de déterminer combien doivent les perdants aux gagnants, sachant que:
+- l'*Est* perd et gagne plus de points
+- le *Tsumo* fait plus gagner de points que le *Ron*
+- chaque répétition (lorsque l'*Est* gagne, les mises augmentent
+
+!!!
+    En cas d'égalité (lorsque la pioche est vide), un total de 3000 points est échangé, indépendament des mains des gagnants.
+    Ainsi, il y a quatre situations:
+    - Il n'y a qu'un seul gagnant -> tout le monde lui donne 1000 points
+    - Il y a deux gagnants -> chaque gagnants récupère 1500 points et chaque perdant donne 1500 points
+    - Il y a trois gagnants -> chaque gagnant récupère 1000 points du perdant
+    - Tout le monde est gagnant ou perdant -> il ne se passe rien.
+
+Introduction aux stratégies
+============
+Le Riichi Mahjong possède des stratégies parfois très poussées: il faut savoir quelles tuiles défausser, savoir quand prendre des risques ou non, savoir lire la défausse des autres joueurs etc...
+Heureusement, le [Riichi Book 1](https://dainachiba.github.io/RiichiBooks/) est une très bonne introduction à partir du chapitre 3 pour progresser rapidement au début et comprendre le jeu plus en profondeur.
+
+Variantes et extensions
+==========
+8 manches
+------
+Originalement, le Riichi Mahjong est en 8 manches: 4 manches *Est* suivie de 4 manches *Sud*.
+Ce que cela signifie est que lorsque chaque joueur à fini ses manches en tant qu'*Est*, quatre nouvelles manches sont relancées presque exactement comme en début de partie, à deux différence près:
+- Les points ne sont bien évidemment pas réinitialisés
+- Le vent dominant est dorénavant le *Sud*.
+Tout le reste se déroule exactement comme une partie à 4 manches.
+
+!!! Warning
+    Seul le vent dominant change. Cela implique que:
+    - un brelan de vent d'*Est* n'est un *Yaku* que pour le joueur à l'*Est*
+    - un brelan de vent de *Sud* est un *Yaku* pour tous les joueurs
+    - le système de points reste inchangé: l'asymétrie porte toujours sur le joueur *Est*
+
+!!! Tip
+    Une partie en 4 manche d'*Est* s'appelle *Tonpusen* signifiant "manche d'Est uniquement".
+
+    Une partie en 8 manche s'appelle *Hanchan* signifiant... "demi partie".
+    Cela vient du fait que la variante chinoise se déroule en 16 manches !
+    (Heureusement, il n'y a pas de répétition dans les règles compétitives)
+
+5 joueurs
+------
+Une variante possible pour jouer à 5 est de procéder à une tournante. À chaque manche (modulo répétition), un des joueurs ne joue pas.
+Pendant ce temps, les quatre autres jouent leur manche comme si de rien n'étant.
+Afin d'alterner, le joueur finissant sa manche d'*Est* cède sa place à celui qui ne jouait pas.
+
+Ainsi fait, modulo les répétitions, chaque joueur reste inactif pendant une manche, a été au moins une fois *Est*, et ne bougera plus une fois qu'il se sera rassie.
+
+!!!
+    Notons donc que le joueur qui s'assoie jouera donc en temps que *Nord*.
+    Ainsi, même la rotation des vents est respectée du point de vue des joueurs.
+
+3 joueurs
+------
+Jouer à trois joueurs relève cependant d'un défi supplémentaire.
+
+Pour commencer, le nombre de tuiles est de fait diminué: **toutes les tuiles de 2 à 8 de *Pin* sont retirées**.
+Seuls les terminaux sont gardés, car cela permet d'éviter de tuer des *Yakus* tels les *13 orphelins*.
+
+Ensuite, **il n'y a pas de joueur *Nord***.
+
+**Il n'y a pas non plus de *Chii* possible**.
+
+Enfin, **la tuile *Nord* joue le rôle de *Dora***.
+Elle peut être défaussée, gardée ou bien mise de côté.
+Dans ce dernier cas, le joueur annonce "Kita", met le vent du *Nord* de côté et repioche.
+
+Tout le reste est identique à une partie à quatre joueurs.
+
+# Liens pour s'entrainer
+Pour s'entrainer, rien de mieux que la pratique.
+Le mieux est évidemment de jouer en présentiel.
+Heureusement, de nombreux sites propopsent du mahjong en ligne, même si dans la plupart des cas, ils sont soit payants, soit non traduits.
+Nous pouvons tout de même en citer quelques-uns:
+- [Tenhou](https://tenhou.net/) est très populaire, mais non traduit. Les chapitres 1 et 2 du [Riichi Book 1](https://dainachiba.github.io/RiichiBooks/) expliquent tout de même comment procéder pour se débrouiller sur ce site.
+- [Mahjongo](https://mahjongo.com/riichi) est plus simple, mais gratuit et traduit en anglais, parfait pour prendre en main le jeu, voir jouer contre de vrais joueurs.
+- [Scoringtrainer](https://scoringtrainer.konbamwa.net/) permet de s'entrainer à calculer les points. La formule complète y est également détaillée et expliquée.
+- [Mahjong Efficiency](https://euophrys.itch.io/mahjong-efficiency-trainer) permet de s'entrainer à se mettre en *Tenpai* le plus rapidement possible, utile pour certaine situation et mieux reconnaitre les attentes.
+
+<!-- Markdeep: -->
+<script src="https://morgan3d.github.io/markdeep/latest/markdeep.min.js?" charset="utf-8"></script>
+<script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

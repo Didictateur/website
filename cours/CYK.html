@@ -1,0 +1,176 @@
+<meta charset="utf-8">
+
+Rappels de notions
+===============
+Une grammaire $G$ est la donnée d'un quadruplet $G=(V, T, P, S)$, où $V$ est un ensemble de variable, $T$ un ensemble de terminaux, $P$ une règle de production et $S$ une variable de début. Par la suite, nous considérerons les grammaires sous forme normale de Chomsky qui sont les grammaires dont $P\subseteq V\times (V^2\times T)$.
+
+Idée de l'algorithme
+==============
+
+Problème formel
+-----------
+
+Le problème du mot consiste en le fait de déterminer si un mot donné est engendré par une grammaire. Une manière d'y parvenir est de considérer les sous-mots du mot en question et de déterminer s'il existe des suites de règle de production qui permettent d'engendrer ce sous-mot. Ainsi, il est possible de transformer le problème du mot en problème de programation dynamique:
+
+Soit un mot $a=a_1a_2...a_{n-1}a_{n}$ et une grammaire. Nous commençons par définir  $\forall i< j, E_{i, j}=\{X|a_{i}...a_{j}\in L_G(X)\}$. Autrement dit, toutes les règles qui peuvent engendrer le sous-mot $a_{i}...a_{j}$. Ces ensembles peuvent ensuite etre construits par récurrence sur $j-i$:
+- Cas de base:
+
+    $\forall i, X\in E_{i, i} \Leftrightarrow (X, a_i)\in P$
+
+- Cas récursif:
+
+    $\forall i< j, X\in E_{i, j} \Leftrightarrow \exists k\in [|i, j|], \exists (X, YZ)\in P, Y\in E_{i, k}, Z\in E_{k+1, j}$
+
+Visuellement
+---------
+
+Concrètement, il s'agit de considérer tous les sous-découpages de cette forme:
+
+***************************************************************
+*                i                k                j
+*        .-------.----------------.----------------.--------.
+* Mot a: |       | Engendré par Y | Engendré par Z |        |
+*        '-------'-------+--------'--------+-------'--------'
+*                        |                 |
+*                        |                 |
+*                i       v                 v       j
+*        .-------.---------------------------------.--------.
+* Mot a: |       |   Engendré par X via X--> YZ    |        |
+*        '-------'---------------------------------'--------'
+*
+***************************************************************
+
+Nous pouvons ainsi construire $E_{1,n}$, et conclure que le mot est engendré par notre grammaire si et seulement si $S\in E_{1,n}$.
+
+Exemple
+=============
+Considérons la grammaire suivante:
+- $S\to AB$
+- $A\to BC|a$
+- $B\to CD|AD|b$
+- $C\to a$
+- $D\to b$
+
+Question: le mot $abba$ est-il engendré par cette grammaire ?
+
+Pour se faire, nous cherchons les sous-mots engendrés par des règles. Pour se faire, nous créons le tableau suivant:
+
+$a$  $(1)$        |  $b$ $(2)$       |  $a$ $(3)$       |  $b$ $(4)$
+:----------------:|:----------------:|:----------------:|:----------------:
+$E_{1,1}=\{A,C\}$ |$E_{2,2}=\{B,D\}$ |$E_{3,3}=\{A,C\}$ |$E_{4,4}=\{B,D\}$
+
+Puisque la lettre $a$ peut etre obtenue via les règles $A\to a$ et $C\to a$, et que $b$ peut etre obtenu via les règles $B\to b$ et $D\to b$.
+
+La deuxième étape consiste à calculer les $E_{i, i+1}$ par récurrence. Pour cette étape, les seules possibilités sont la concaténation entre $E_{i, i}$ et $E_{i+1, i+1}$.
+Ainsi, $E_{1, 2}$ est calculé à partir de $E_{1, 1}$ et $E_{2, 2}$ en considérant tous les $N$ tels qu'il existe les règles $N\to AB$ ou $N\to AD$ ou $N\to CB$ ou $N\to CD$. Or, il n'y a ici que les règles $S\to AB$, $B\to CD$ et $B\to AD$. Ainsi, $E_{1, 2} = \{S,B\}$. Ainsi, nous obtenons une nouvelle ligne au tableau:
+
+
+$a$  $(1)$        |  $b$ $(2)$       |  $a$ $(3)$       |  $b$ $(4)$
+:----------------:|:----------------:|:----------------:|:----------------:
+$E_{1,1}=\{A,C\}$ |$E_{2,2}=\{B,D\}$ |$E_{3,3}=\{A,C\}$ |$E_{4,4}=\{B,D\}$
+$E_{1,2}=\{S,B\}$ |$E_{2,3}=\{A\}$   |$E_{3,4}=\{S,B\}$|
+
+Pour l'étape suivante, il y a maintenant plus de cas à considérer. En effet, nous pouvons écrire les sous-mots de plusieurs manières possible : $aba=a+ba=ab+a$. Il faut ainsi consédérer pour calculer $E_{1, 3}$ les couples $(E_{1, 2}, E_{3, 3})$ et $(E_{1, 1}, E_{2, 3})$. Ainsi, dans cet exemple, $E_{1, 3}=\{V\}$, puisque le cas des $\emptyset$ ne peuvent pas aboutir à une règle de production d'une grammaire sous la forme normale de Chomsky.
+
+Ainsi, le tableau est transformé en :
+
+
+$a$  $(1)$        |  $b$ $(2)$       |  $a$ $(3)$       |  $b$ $(4)$
+:----------------:|:----------------:|:----------------:|:----------------:
+$E_{1,1}=\{A,C\}$ |$E_{2,2}=\{B,D\}$ |$E_{3,3}=\{A,C\}$ |$E_{4,4}=\{B,D\}$
+$E_{1,2}=\{S,B\}$ |$E_{2,3}=\{A\}$   |$E_{3,4}=\{S,B\}$|
+$E_{1,3}=\{V\}$   |$E_{2,4}=\{U\}$   ||
+
+Et enfin, nous pouvons calculer $E_{1, 4}$:
+
+$a$  $(1)$        |  $b$ $(2)$       |  $a$ $(3)$       |  $b$ $(4)$
+:----------------:|:----------------:|:----------------:|:----------------:
+$E_{1,1}=\{T,V\}$ |$E_{2,2}=\{W,U\}$ |$E_{3,3}=\{W,U\}$ |$E_{4,4}=\{TV\}$
+$E_{1,2}=\{S,V\}$ |$E_{2,3}=\emptyset$|$E_{3,4}=\{U,T\}$|
+$E_{1,3}=\{V\}$   |$E_{2,4}=\{U\}$   ||
+$E_{1,4}=\{V, S\}$|||
+
+Puisque $S\in E_{1, 4}$, cela signifie qu'il existe des dérivations aboutissants au mot $abba$, et donc que ce mot est bel et bien engendré par cette grammaire.
+
+Algorithme Cocke-Younger-Kasami
+==================
+
+L'algorithme
+-----------
+
+L'algorithme suit le procédé présenté précédemment: le cas initial en premier, puis une boucle sur $d=j-i$ croissant, dans lesquels nous construisons les $E_{i, j}$:
+
+~~~~~~~~~~none
+initialiser E[i,j] = {}
+pour i de 1 à n faire:    // cas de base
+|   pour (X, a[i]) dans P faire:
+|   |   rajouter X dans E[i, j]
+
+pour d de 1 à n-1 faire:    // récurrence sur d = j-i                                   (1)
+|   pour i de 1 à n-d faire:    // pour i < j                                           (2)
+|   |   pour k de i à i+d-1 faire:  // parcourir les découpage du sous-mot possible     (3)
+|   |   |   pour (X, YZ) dans P faire:
+|   |   |   |   si Y dans E[i, k] et Z dans E[k+1, j] faire:
+|   |   |   |   |   rajouter X dans E[i, j]
+
+retourne vrai si S est dans E[1, n], faux sinon
+~~~~~~~~~~
+
+Finitude
+--------------
+La finitude est assez directe, puisque l'algorithme effectue des boucle sur une variable croissant strictement à chaque boucle, et majoré par $n$ ou $|G|$. Ainsi, nous sommes certain que cet algorithme termine.
+
+Correction
+----------------
+Pour montrer la correction, il suffit de démontrer l'invariant de fin de boucle pour la boucle $(1)$:
+
+        $$I(d):\forall i, \forall j, j-i\leq d, E_{i, j} \textit{ est correct}$$
+
+- Initialisation:
+
+    L'initialisation se fait sur $I(0)$, avant que la boucle commence. Dans ce cas la, il sagit des mots de longueur $1$. Or par construction dans le cas de base, tous les $E_{i, i}$ sont correct. Ainsi, nous avons bien l'initialisation.
+
+- Hérédité:
+
+    Supposons l'invariant vrai à la fin de la boucle $d-1$. Nous pouvons constater que pour tout $i$ la boucle $(3)$ construit $E_{i, j}=\{X|\exists k, \exists (X, YZ), Y\in E_{i,k}, Z\in E_{k+1,j}\}$. Or, par hypothèse de récurences, les $E_{i, k}$ et les $E_{k+1, j}$ sont corrects. De ce fait, $E_{i, j}$ est lui aussi correct.
+
+Ainsi, à la fin de la dernière boucle, il est découle que $E_{1, n}$ est correct, et donc que l'algorithme est correct.
+
+Complexité
+=================
+
+Temporelle
+-----------
+Le cas de base s'effectue via une boucle en $O(n)$, dans lauelle une autre boucle s'effectue en $O(|G)$, soit au total en $O(n|G|)$.
+
+La cas d'hérédité effectue trois boucles en $O(n)$, et une boucle en $O(|G|)$. La réponse évidente est donc en $O(n^3|G|)$. Cependant, vérifier si une variable $Y$ est dans un $E_{i, j}$ est lui aussi couteux. Si la structure est une liste, alors vérifier l'appartenance se fait en $O(|G)$. Il est possible d'utiliser des structures plus efficaces, et en particulier le bitset qui permet d'inserer et de tester l'appartenance en temps constant.
+
+Au final, l'algorithme proposé s'effectue en $O(n^3|G|)$.
+
+Une autre vision possible est de considérer la taille de la grammaire négligeable face à la taille du mot. Dans ce cas seulement, nous pouvons englober $|G|$ dans une constante.
+
+Il est également possible d'adapter l'algorithme à une multiplication de matrice permettant de réduire la complexité cubique au profit d'une constante cachée conséquente.
+
+Spatiale
+-----------
+Naivement, il est nécessaire de garder en mémoire la valeur de chaque $E_{i, j}$, chacun de taille au plus en $O(|G|)$. Ainsi, la complexité est en $O(n^2|G|)$.
+
+Peut-on faire mieux ? À priori, il n'est pas possible de faire mieux dans la mesure où le calcule de $E_{i, j}$ dépend de la valeur de $E{i, i}$ et de $E_{j, j}$, qui sont donc réutilisés aussi bien au début de l'algorithme qu'en arrivant en fin d'algorithme. Il ne semble donc pas possible de pouvoir diminuer la complexité spatiale.
+
+Exercices
+============
+
+Application
+------------
+Le mot $abab$ est-il engendré par la grammaire proposé en exemple ?
+
+Sous-mots
+------------
+Déduire de l'algorithme CYK l'ensemble des sous-mots de $bbaba$ engendré par la grammaire donné en exemple.
+
+Généralisation
+------------
+En pratique, l'algorithme est-il généralisable à toute grammaire non contextuelle ? Sinon, sous-quelle condition peut-on le faire ?
+
+
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script src="https://morgan3d.github.io/markdeep/latest/markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>File avec 6 piles</title>
+	<style>
+		body, html {
+			height: 100%;
+			margin: 0;
+			display: flex;
+			justify-content: center;
+		}
+		#canvasContainer {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		#myCanvas {
+			max-width: 100%;
+			max-height: 100vh;
+		}
+	</style>
+</head>
+<body>
+	<div id="canvasContainer"></div>
+
+	<script>
+		if (window.cleanup) {
+			window.cleanup();
+		}
+
+		const container = document.getElementById("canvasContainer");
+		container.innerHTML = `<canvas id="myCanvas" width="1000" height="1000"></canvas>`;
+
+		const timestamp = new Date().getTime();
+
+		const currentScript = document.createElement("script");
+		currentScript.type = "module";
+		currentScript.src = `pile.js?t=${timestamp}`;
+
+		document.body.appendChild(currentScript);
+	</script>
+</body>

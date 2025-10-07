@@ -1,0 +1,44 @@
+* {
+  box-sizing: border-box;
+}
+
+#pp {
+  border-radius: 50%;
+  width: 320px;
+  height: 400px;
+}
+
+.row {  
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.side {
+  flex: 20%;
+  padding: 20px;
+}
+
+.main {
+  flex: 70%;
+  padding: 20px;
+  background: whitesmoke;
+}
+
+.flag {
+  width: 80px;
+  float: right;
+}
+
+li{
+  margin: 10px 0;
+}
+
+body {
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  background: royalblue;
+}
+
+#easteregg {
+  color: black;
+}

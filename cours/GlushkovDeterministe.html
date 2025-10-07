@@ -1,0 +1,421 @@
+<meta charset="utf-8">
+
+Idée de l'algorithme
+=====================================================
+
+Dans le but de comprendre l'algorithme, il faut commencer par comprendre l'idée qui se cache derrière. Pour se faire, nous commençons donc par un exemple informel sur le langage $(a|b)^*abb$. Pour commencer, il est nécessaire de considérer un caractère de fin: $ (a|b)^*abb\# $. Ensuite, nous distinguons chaque lettre de l'expression à l'aide d'un indicage: $ (a_1 | b_2)^* a_3 b_4 b_5 \#_6 $.
+
+Cela nous permet maintenant de définir l'ensemble des premières lettres, des dernières lettre et les transitions:
+
+- *premières lettres* : $\{1,2,3\}$
+- *dernière lettre* : $\{6\}$
+- *transitions* : $1 \mapsto \{1,2,3\}, \ 2 \mapsto \{1,2,3\}, \ 3 \mapsto \{4\}, \ 4 \mapsto \{5\}, \ 5 \mapsto \{6\}$
+
+L'ensemble des transitions est définit en fonction des positions possibles depuis une autres. Par exemple, les mots suivants sont accépté: $a_1a_1a_3b_4b_5\#_6$, $a_1b_2a_3b_4b_5\#_6$ et $a_1a_3b_4b_5\#_6$. De fait, après la lettre $a_1$, il est possible d'avoir les lettres $a_1$, $b_2$ et $a_3$. Dit autrement, depuis la position $1$, il est possible d'atteindre les états $1$, $2$ et $3$.
+
+Maintenant, il est possible de construire l'automate fini déterministe (AFN) en suivant ces étapes:
+
+Premièrement, nous plaçons l'état initial correspondant aux premières lettres. Il s'agit de l'état initial:
+
+*************************
+*                       
+*        .-------.      
+*    -->| 1, 2, 3 |     
+*        '-------'      
+*                       
+*************************
+
+Ensuite, pour chaque lettre possible, nous regardons quels sont les suivant correspondant pour cet état donné. Ici par exemple, s'il on considère la lettre $a$, il peut s'agit soit de $a_1$, soit de $a_3$. En effet, les positions considérées sont $1$, $2$ et $3$, mais la position $2$ correspond à $b_2$. Le nouvel état sera l'union des positions suivantes possibles. Par exemple, les positions suivants $1$ sont $1$, $2$ et $3$, et les positions suivants $3$ sont réduites à $4$. Ainsi, nous pouvons rajouter l'état $\{1, 2, 3, 4\}$ et la transition qui vient avec. Après cette étape, l'automate devient:
+
+*******************************************
+*            b
+*           .-.
+*          |   |
+*          |   v       
+*        .-+-----.    a    .----------.
+*    -->| 1, 2, 3 +------>| 1, 2, 3, 4 |
+*        '-------'x        '----------'
+*                       
+*******************************************
+
+Maintenant que toutes les transitions sortant de l'état considéré ont été tracés, nous pouvons donc marquer cet état comme traité. Puisque nous avons au moins un état non marqué (ici, un seul état non marqué), nous pouvons réitérer:
+
+*******************************************
+*            b                  a
+*           .-.                .-.
+*          |   |              |   |
+*          |   v              |   v
+*        .-+-----.    a    .--+-------.
+*    -->| 1, 2, 3 +------>| 1, 2, 3, 4 |
+*        '-------'x        '----+-----'x
+*                               |
+*                               |b
+*                               v
+*                          .----------.
+*                         | 1, 2, 3, 5 |
+*                          '----------'
+*
+*
+*******************************************
+
+Puis de même:
+
+*******************************************
+*            b                  a
+*           .-.                .-.
+*          |   |              |   |
+*          |   v              |   v
+*        .-+-----.    a    .--+-------.
+*    -->| 1, 2, 3 +------>| 1, 2, 3, 4 |
+*        '-------'x        '----+--+--'x
+*                             ^    |
+*                             |a   |b
+*                             |    v
+*       .----------.    b  .--+-------.
+*      | 1, 2, 3, 6 |<----+ 1, 2, 3, 5 |
+*       '----------'       '----------'x
+*
+*
+*******************************************
+
+Et enfin:
+
+*******************************************
+*            b                  a
+*           .-.                .-.
+*          |   |              |   |
+*          |   v              |   v
+*        .-+-----.     a   .--+-------.
+*    -->| 1, 2, 3 +---+-->| 1, 2, 3, 4 |
+*        '-------'x        '----+--+--'x
+*                           ^  ^   |
+*                      a    |  |a  |b
+*                 .--------'   |   |
+*                |             |   v
+*       .----+---+-.   b   .---+------.
+*      | 1, 2, 3, 6 |<----+ 1, 2, 3, 5 |
+*       '----+-----'       '----------'x
+*             
+*             
+*             
+*******************************************
+
+Les états finaux sont les états contenant la position du caractère final, donc ici contenant $6$, nous laissant finalement avec l'AFD final:
+
+*******************************************
+*            b                  a
+*           .-.                .-.
+*          |   |              |   |
+*          |   v              |   v
+*        .-+-----.     a   .--+-------.
+*    -->| 1, 2, 3 +---+-->| 1, 2, 3, 4 |
+*        '-------'         '----+--+--' 
+*            ^              ^  ^   |
+*            |b        a    |  |a  |b
+*            |    .--------'   |   |
+*            |   |             |   v
+*       .----+---+-.   b   .---+------.
+*      | 1, 2, 3, 6 |<----+ 1, 2, 3, 5 |
+*       '----+-----'       '----------' 
+*            |
+*            |
+*            v
+*******************************************
+
+Algorithme de Glushkov déterministe
+========================
+
+L'algorithme de Glushkov travaille sur l'arbre syntaxique de l'expression régulière. En voici un pour l'exemple précédent:
+
+*********************************************************************
+*                               .-.                                 
+*                              | . |                                
+*                               +-+                                 
+*                              /   \                                
+*                             /     \                               
+*                            /       \                              
+*                         .-+         +-.                           
+*                        | ⁎ |       | . |                          
+*                         '+'         +-+                           
+*                          |         /   \                          
+*                         .+.     .-+     \                         
+*                        | ǀ |   | a |     \                        
+*                         +-+     '-'       +-.                     
+*                        /   \             | . |                    
+*                     .-+     +-.           +-+                     
+*                    | a |   | b |         /   \                    
+*                     '-'     '-'       .-+     \                   
+*                                      | b |     \                  
+*                                       '-'       +-.               
+*                                                | . |              
+*                                                 +-+               
+*                                                /   \              
+*                                             .-+     +-.           
+*                                            | b |   | # |          
+*                                             '-'     '-'           
+*********************************************************************
+
+La première étape a été d'individualiser les tokens. Cela peut se faire arbitrairement et n'a pas une importance en soi pour l'algorithme, car ce dernier les distingues déjà de fait de manière implicite. Cependant, cela permet de mieux le comprendre et de le visualiser grâce aux exemples.
+
+Voici ce que cela pourrait donner pour notre arbre syntaxique:
+
+*********************************************************************
+*                               .-.                                 
+*                              | . |                                
+*                               +-+1                               
+*                              /   \                                
+*                             /     \                               
+*                            /       \                              
+*                         .-+         +-.                           
+*                        | ⁎ |       | . |                          
+*                         '+'2        +-+3                          
+*                          |         /   \                          
+*                         .+.     .-+     \                         
+*                        | ǀ |   | a |     \                        
+*                         +-+4    '-'5      +-.                     
+*                        /   \             | . |                    
+*                     .-+     +-.           +-+6                    
+*                    | a |   | b |         /   \                    
+*                     '-'7    '-'8      .-+     \                   
+*                                      | b |     \                  
+*                                       '-'9      +-.               
+*                                                | . |              
+*                                                 +-+10              
+*                                                /   \              
+*                                             .-+     +-.           
+*                                            | b |   | # |          
+*                                             '-'11   '-'12          
+*********************************************************************
+
+Cela nous sera grandement utile pour notre exemple. Mais pour l'instant, nous pouvons définir quatre fonctions récursivement. Ces dernières travaillent sur les sous-arbres de l'arbre syntaxique, ce qui nous permettra de ressortir algorithmiquement des informations sur les relations entre les tokens.
+
+Annulabilité :
+----------
+
+Nous commençons avec la fonction $annulable()$ qui renvoie vrai si et seulement si le l'expression régulière représentée par le sous-arbre mis en paramètre contient le mot vide. Cette fonction se définit de manière récursive:
+
+- $annulable(feuille) = \bot$
+- $annulable(e_1 \cdot e_2) = annulable(e_1) \wedge annulable(e_2)$
+- $annulable(e_1 | e_2) = annulable(e_1) \vee annulable(e_2)$
+- $annulable(e^*) = \top$
+
+Premières positions :
+---------
+
+Cela nous permet ensuite de définir la fonction $premier()$ qui renvoie l'ensemble des tokens par lesquels l'expression régulière représentée par le sous-arbre considérée peut commencer. Elle se définit également par récurrence comme suit:
+- $premier(feuille \ n) = \{n\}$
+- $premier(e_1 \cdot e_2) = \bigg\{ \begin{array}{c} premier(e_1) \ \text{si} \ \neg annulable(e_1) \\ premier(e_1) \cup premier(e_2) \ \text{sinon} \end{array}$
+- $premier(e_1 | e_2) = premier(e_1) \cup premier(e_2)$
+- $premier(e^*) = premier(e)$
+
+La disjonction de cas vient du fait que si dans la concaténation, $e_1$ n'est pas annulable, alors il possède nécessairement au moins un caractère. De fait, les premières lettres de $e_1\cdot e_2$ sont celles de $e_1$. À l'inverse, si $e_1$ est annulable, alors il est possible de commencer un mot de $e_1\cdot e_2$ de la forme $\epsilon\cdot e_2$. Les premiers caractères de $e_1\cdot e_2$ peuvent alors être également ceux de $e_2$, et l'union est alors nécessaire.
+
+Dernières positions :
+------------
+
+Ce cas reste sesiblement identique au cas précédent, à la différence que cette fonction calcule les derniers caractères possible de l'expression représenté par le sous-arbre considéré.
+
+- $dernier(feuille \ n) = \{n\}$
+- $dernier(e_1 \cdot e_2) = \bigg\{ \begin{array}{c} dernier(e_2) \ \text{si} \ \neg annulable(e_2) \\ dernier(e_1) \cup dernier(e_2) \ \text{sinon} \end{array}$
+- $dernier(e_1 | e_2) = dernier(e_1) \cup dernier(e_2)$
+- $dernier(e^*) = dernier(e)$
+
+Cependant, le cas de la concaténation est inversée. En effet, puisqu'il s'agit de déterminer les caractères finaux, la disjonction de cas se fait maintenant sur le fils droite, et non plus le fils gauche.
+
+Positions suivantes :
+-------------
+
+Enfin, vient la dernière fonction qui permet de déterminer les caractères qui en suive un autre. Nous pouvons le définir comme suit:
+
+- $suivant(feuille \ n)=\bigg\{\begin{array}{c} \bigcup{premier(e_2)}\ \textit{s'il existe } e_1\cdot e_2\textit{ tels que }n\in dernier(e_1) \\ union \\ \bigcup{premier(e)}\ \textit{s'il existe } e^*\textit{ tel que }n\in dernier(e) \end{array}$
+- $suivant(e_1\cdot e_2)=\emptyset$
+- $suivant(e_1|e_2)=\emptyset$
+- $suivant(e^*)=\emptyset$
+
+Une autre façon de déterlminer les caractères suivants un autre, est de construire l'ensemble de manière procédurale. Lorsque que l'on considère un noeud, nous rajoutons des éléments dans certains ensenble selon la nature du noeud en question. Il y a alors deux options possibles:
+
+- noeud $e_1 \cdot e_2$ $\to$ $\forall a \in dernier(e_1), premier(e_2) \subset suivant(a)$
+- noeud $e^*$ $\to$ $\forall a \in dernier(e), premier(e) \subset suivant(a)$
+
+
+Algorithme
+----------------
+Enfin, nous nous intéressons maintenant à l'algorithme qui utilise les informations précédentes dans le but de construire l'ensemble des états $Etats$ et les transitions $Trans$ de l'automate:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~none
+Etats = {premier(e0)} non marqué, avec e0 la racine de l'arbre syntaxique
+tant qu'il existe S dans Etats non marqué faire:
+    marquer S
+    pour tout symbole a dans Sigma faire:
+        S' = Union(suivant(p)) ou p est dans S et p correspond à a
+        si S' n'est pas Etats :
+            rajouter S' dans Etats non marqué
+        rajouter Trans(S,e) = S'
+retourner Etats, Trans
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Exemple
+============
+
+Pour l'arbre syntaxique précédent, nous obtenons le tableau suivant:
+
+Noeud/Feuille | annulable | premier | dernier | suivant
+:------------:|:---------:|:-------:|:-------:|:-------:
+       1      |    Faux   | 5, 7,8  |   12    |         
+       2      |    Vrai   |   7,8   |   7, 8  |
+       3      |    Faux   |    5    |   12    |
+       4      |    Faux   |   7, 8  |   7, 8  |
+       5      |    Faux   |    5    |   5     | 9
+       6      |    Faux   |    9    |   12    |
+       7      |    Faux   |    7    |   7     | 5,7,8
+       8      |    Faux   |    8    |   8     | 5,7,8
+       9      |    Faux   |    9    |   9     | 11
+       10     |    Faux   |    11   |   12    |
+       11     |    Faux   |    11   |   11    | 12
+       12     |    Faux   |    12   |   12    |
+
+Ici, le neud racine est le noeud $1$. De fait, nous pouvons appliquer l'algorithme décrit précédemment en commençant par l'état initial:
+
+*************************
+*                       
+*        .-------.      
+*    -->| 5, 7, 8 |     
+*        '-------'      
+*                       
+*************************
+
+Puis:
+
+*******************************************
+*            b
+*           .-.
+*          |   |
+*          |   v       
+*        .-+-----.    a    .----------.
+*    -->| 5, 7, 8 +------>| 5, 7, 8, 9 |
+*        '-------'x        '----------'
+*                       
+*******************************************
+
+Ensuite:
+
+*******************************************
+*            b                  a
+*           .-.                .-.
+*          |   |              |   |
+*          |   v              |   v
+*        .-+-----.    a    .--+-------.
+*    -->| 5, 7, 8 +------>| 5, 7, 8, 9 |
+*        '-------'x        '----+-----'x
+*                               |
+*                               |b
+*                               v
+*                          .-----------.
+*                         | 5, 7, 8, 11 |
+*                          '-----------'
+*
+*
+*******************************************
+
+Suivie de:
+
+*******************************************
+*            b                  a
+*           .-.                .-.
+*          |   |              |   |
+*          |   v              |   v
+*        .-+-----.    a    .--+-------.
+*    -->| 5, 7, 8 +------>| 5, 7, 8, 9 |
+*        '-------'x        '----+--+--'x
+*                             ^    |
+*                             |a   |b
+*                             |    v
+*      .-----------.    b  .--+--------.
+*     | 5, 7, 8, 12 |<----+ 5, 7, 8, 11 |
+*      '-----------'       '-----------'x
+*
+*
+*******************************************
+
+Et enfin:
+
+*******************************************
+*            b                  a
+*           .-.                .-.
+*          |   |              |   |
+*          |   v              |   v
+*        .-+-----.    a    .--+-------.
+*    -->| 5, 7, 8 +------>| 5, 7, 8, 9 |
+*        '-------'x        '----+--+--'x
+*            ^              ^  ^   |
+*            |b        a    |  |a  |b
+*            |    .--------'   |   |
+*            |   |             |   v
+*      .-----+---+-.    b  .--+--------.
+*     | 5, 7, 8, 12 |<----+ 5, 7, 8, 11 |
+*      '-----------'x      '-----------'x
+*             
+*             
+*             
+*******************************************
+
+Et finalement, on rajoute les états finaux:
+
+*******************************************
+*            b                  a
+*           .-.                .-.
+*          |   |              |   |
+*          |   v              |   v
+*        .-+-----.    a    .--+-------.
+*    -->| 5, 7, 8 +------>| 5, 7, 8, 9 |
+*        '-------'         '----+--+--' 
+*            ^              ^  ^   |
+*            |b        a    |  |a  |b
+*            |    .--------'   |   |
+*            |   |             |   v
+*      .-----+---+-.    b  .--+--------.
+*     | 5, 7, 8, 12 |<----+ 5, 7, 8, 11 |
+*      '-----+-----'       '-----------' 
+*            |
+*            |
+*            v
+*******************************************
+
+Nous obtenons bien l'automate que nous avions en première section !
+
+Exercices
+===================
+
+$a^*b$
+-------
+Appliquer l'algorithme sur le langage $a^*b$. Que peut-on en dire ?
+
+<details>
+	<summary>Voir la réponse ici</summary>
+
+L'automate créé possède un état puits représenté par l'ensemble vide, et est de surcroit minimal. Sa complétude s'explique simplement par la création de transition pour chaque symbole pour chaque état.
+</details>
+
+$(a|b)^*a(a|b)$
+-------
+Faites de meme sur le langage $(a|b)^*a(a|b)$. Il est possible de trouver la correction <a href="./ex1.pdf">ici</a>.
+
+Correction et finitude
+-------
+Démontrer que l'algorithme proposé finit et est correct.
+
+Minimalité
+-------
+Démontrer que l'automate obtenu est l'automate minimal, ou trouver un contre exemple.
+
+<details>
+	<summary>Voir la réponse ici</summary>
+
+Le langage $c^*|c$ fournit un contre exemple où l'algorithme ne retourne pas l'automate minimal.
+</details>
+
+
+
+
+
+<!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script src="https://morgan3d.github.io/markdeep/latest/markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="//cdn.jsdelivr.net/npm/phaser@3.12/dist/phaser.js"></script>
+  <link rel="stylesheet" href="pacman.css">
+  <title>Easter Egg 3</title>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="social-links">
+      <div id="pacman-banner">PacENS</div>
+    </div>
+  </div>
+
+  <div class="container game-container">
+    <canvas id="mycanvas"></canvas>
+  </div>
+
+  <script>
+    window.twttr = (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "pacman.js";
+      fjs.parentNode.insertBefore(js, fjs);
+      t._e = [];
+      t.ready = function(f) {
+        t._e.push(f);
+      };
+      return t;
+    }(document, "script"));
+  </script>
+</body>
+
+</html>

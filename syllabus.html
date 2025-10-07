@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Syllabus</title>
+	<style>
+		body {
+			font-family: 'Arial', sans-serif;
+			margin: 20px;
+			background-color: #f0f0f0;
+		}
+
+		h1 {
+			color: #333;
+		}
+
+		a {
+			color: #007bff;
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		h1 {
+			color: #002bff;
+		}
+
+		h2 {
+			color: #002bff;
+		}
+
+		h3 {
+			color: #002bff;
+		}
+
+		ul {
+			margin-top: 5px;
+			margin-bottom: 15px;
+		}
+
+		li {
+			margin-bottom: 5px;
+		}
+
+	</style>
+</head>
+<body>
+	<div id="contenu-markdown"></div>
+	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+	<script>
+		var contenuMarkdown =
+"# My ENS Syllabus\n\n"+
+
+"## Aggregation\n"+
+
+"\n\n"+
+"## M1\n"+
+"### First semester\n"+
+"- Advanced operating systems with [Isabelle Puaut](https://team.inria.fr/pacap/members/isabelle-puaut/)\n"+
+"- Complexity theory with [François Schwarzentruber](https://people.irisa.fr/Francois.Schwarzentruber/)\n"+
+"- Software formal analysis and design with [Thomas Genet](http://people.irisa.fr/Thomas.Genet/)\n"+
+"- Digital sobriety with [Olivier Ridoux](http://www.irisa.fr/lande/ridoux/page.pro.e.html)\n"+
+"- Signal processing with [Nicolas Keriven](https://nkeriven.github.io/)\n"+
+"### Second semester\n"+
+"- Information theory and coding with [Eric Fabre](http://people.rennes.inria.fr/Eric.Fabre/)\n"+
+"- General compiler concepts with [Simon Rokicki](https://people.irisa.fr/Simon.Rokicki/)\n"+
+"- Machine learning with [Ewa Kijak](http://people.irisa.fr/Ewa.Kijak)\n"+
+"- Computer graphics with [Marc Christie](https://people.irisa.fr/Marc.Christie/)\n"+
+"- Epistemology with [Filipe Drapeau-Contim](https://philo.univ-rennes.fr/interlocuteurs/filipe-drapeau-vieira-contim)\n"+
+
+"\n\n"+
+"## L3\n"+
+"### First semester\n"+
+"- Algorithmic 1 with [François Schwarzentruber](https://people.irisa.fr/Francois.Schwarzentruber/)\n"+
+"- System architecture 1 with [Steven Derrien](https://people.irisa.fr/Steven.Derrien/wordpress)\n"+
+"- Network and C programming with [Simon Rokicki](https://people.irisa.fr/Simon.Rokicki/)\n"+
+"- Language theory and computability with [Gilles Lesventes]()\n"+
+"- Programming 1 in OCAML with [David Baelde](http://www.lsv.fr/~baelde/)\n"+
+"- Complementary math: optimization with [Baptiste Huguet](https://bhuguet.perso.math.cnrs.fr/enseignement.html)\n"+
+"- Lebesgue's integral\n\n"+
+"### Second semester\n"+
+"- Algorithmic 2 with [François Schwarzentruber](https://people.irisa.fr/Francois.Schwarzentruber/)\n"+
+"- Probability and statistics with [François Schwarzentruber](https://people.irisa.fr/Francois.Schwarzentruber/)\n"+
+"- Complementary math: algebra\n"+
+"- System architecture 2 with [Simon Rokicki](https://people.irisa.fr/Simon.Rokicki/)\n"+
+"- Cryptography with [Adeline Roux-Langlois](https://langloi227.users.greyc.fr/)\n"+
+"- Image processing with [Emmanuel Caruyer](http://www.emmanuelcaruyer.com)\n"+
+"- Logic with [David Baelde](http://www.lsv.fr/~baelde/)\n"+
+"- Object programming with C with [Martin Quinson](https://people.irisa.fr/Martin.Quinson/)"+
+
+"\n\n"+
+"## Agregation\n"+
+"The syllabus is the french academic programme of\n"+
+"- [High School](./agreg/Terminal.pdf)\n"+
+"- [MPI](./agreg/MPI.pdf)\n"+
+"- [Licence](./agreg/Licence.pdf)\n"
+;
+
+		var contenuHTML = marked.parse(contenuMarkdown);
+
+		document.getElementById("contenu-markdown").innerHTML = contenuHTML;
+	</script>
+</body>
+</html>

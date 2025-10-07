@@ -1,0 +1,3 @@
+[submodule "riichi"]
+	path = riichi
+	url = https://github.com/Didictateur/Riichi

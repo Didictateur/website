@@ -1,0 +1,5 @@
+- EE1: "Quoique l'on me dise..."
+- EE2: code source
+- EE3: PacENS
+- EE4: Croco Loop
+- EE5: Crocodile Loop
