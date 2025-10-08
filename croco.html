@@ -1,69 +1,927 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-	<title>EasterEgg 4</title>
-	<meta name="view" content="width=device-width, initial-scale=1">
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Terrarium Crocos</title>
 	<style>
-		body {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			margin: 0;
-			flex-direction: column;
-			height: 100vh;
-			background-color: #00b000;
-			/* background-image: url("EasterEggs/images/crocodile.jpg"); */
+		:root{
+			--bg-day:#a6e3b0;
+			--bg-dusk:#7fbf9a;
+			--bg-night:#071724;
+			--soil:#3b2f24;
+			--plant:#1f7a3a;
+			--accent:#ffe66d;
 		}
-		
-		.crocoloop {
-			color: #00e000;
-			transform: translate(0%, 250%) scale(5);
-			font-family: cursive;
+		html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial}
+		body{
+			display:flex;align-items:center;justify-content:center;background:var(--bg-day);transition:background 1s linear;
+			height:100vh;overflow:hidden;color:#042a16
 		}
 
-		iframe {
-			transform: translate(-50%, -150%) scale(3);
-			position: absolute;
+		.frame{
+			width:min(1000px,95vw);height:min(700px,88vh);position:relative;border-radius:16px;overflow:hidden;
+			box-shadow:0 20px 60px rgba(2,10,8,0.5);background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.06));
+			border:4px solid rgba(0,0,0,0.08);
 		}
 
-		.link {
-			text-decoration: none;
-			color: #00e000;
+		canvas{display:block;width:100%;height:100%;background:transparent}
+
+		/* UI: left/right links preserved */
+		.nav {
+			position:absolute;left:12px;top:12px;right:12px;display:flex;justify-content:space-between;pointer-events:auto;
 		}
+		.nav a{color:var(--soil);background:rgba(255,255,255,0.12);padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600}
+
+		/* simple legend */
+		.legend{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;font-size:13px}
+
+		/* sleeping Zs */
+		.zzz{font-weight:900;color:#dfefff;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.4))}
 	</style>
 </head>
 <body>
 
-<div>
-	<iframe src="https://www.youtube.com/embed/vnxaqqLjJAA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
+	<div class="frame" id="frame">
+			<div class="nav">
+			<a id="leftLink" href="https://perso.eleves.ens-rennes.fr/people/jules.timmerman/croco.html">&lt;= Croco</a>
+				<div style="display:flex;gap:10px;align-items:center;">
+										<div id="controls" style="display:flex;gap:8px;align-items:center">
+												<button id="btnPause">Pause</button>
+												<button id="btnAdd">+ Croco</button>
+												<button id="btnRemove">- Croco</button>
+												<!-- replace 'Forcer jour' with a time input to pick any hour -->
+												<label style="display:flex;gap:6px;align-items:center;font-size:13px;color:var(--soil)">
+													<input id="forceCheckbox" type="checkbox" title="Activer l'heure forcée" />
+													<input id="forceTime" type="time" step="60" value="12:00" style="width:90px" />
+												</label>
+										</div>
+					<a id="rightLink" href="https://perso.eleves.ens-rennes.fr/people/jean.vereecke/croco.html">Croco =&gt;</a>
+				</div>
+		</div>
 
-<div class="crocoloop">
-	<p>
-		<a class="link" href="https://perso.eleves.ens-rennes.fr/people/jules.timmerman/croco.html"><=&#x1F40A</a>
-		<a class="link" href="#" onclick="changeBackground()">Crocoloop</a>
-		<a class="link" href="https://perso.eleves.ens-rennes.fr/people/jean.vereecke/croco.html">&#x1F40A=></a>
-	</p>
-</div>
+		<canvas id="terrarium"></canvas>
 
-<script>
-	var showCrocodile = false;
-	
-	function changeBackground() {
-		showCrocodile = !showCrocodile;
+		<!-- container for DOM Lottie players (overlay) -->
+		<div id="lottieLayer" style="position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;overflow:visible;"></div>
 
-		if (showCrocodile) {
-			document.body.style.backgroundImage = 'url("EasterEggs/images/crocodile.jpg")';
-			document.body.style.backgroundColor = 'none';
-			document.title = 'EasterEgg 5';
+				<div class="legend" id="legend">Terrarium — Heures: <span id="timeText"></span></div>
+	</div>
+
+		<script>
+			/* Terrarium Crocos
+				 - Canvas simulation with plants, crocos, sun/moon by local time
+				 - Interactions: click = food (attract), double-click = add croco
+				 - Controls: Pause/Play, add/remove crocos, speed slider, mute
+				 - Night: stars and fireflies; crocos can sleep (display 'z')
+			*/
+		// Terrarium prototype: multiple crocos with simple physics, plants, sun/moon based on local time
+		const canvas = document.getElementById('terrarium');
+		const frame = document.getElementById('frame');
+		const ctx = canvas.getContext('2d');
+
+		let W, H, dpr = Math.max(1, window.devicePixelRatio || 1);
+		function resize(){
+			W = canvas.width = Math.floor(frame.clientWidth * dpr);
+			H = canvas.height = Math.floor(frame.clientHeight * dpr);
+			canvas.style.width = frame.clientWidth + 'px';
+			canvas.style.height = frame.clientHeight + 'px';
+			ctx.setTransform(dpr,0,0,dpr,0,0);
 		}
-		else {
-			document.body.style.backgroundImage = 'none';
-			document.body.style.backgroundColor = '#00b000';
-			document.title = 'EasterEgg 4';
+		window.addEventListener('resize', resize);
+		resize();
+
+		// Environment
+		const plants = [];
+		const crocos = [];
+		const NUM_PLANTS = 14;
+		const NUM_CROCOS = 10;
+	// slow simulation: make crocos move 5x slower by default
+	let simSpeed = 0.2;
+	// audio removed; no mute needed
+
+		function rand(a,b){return a + Math.random()*(b-a)}
+
+		// generate plants positions along bottom with varying heights
+		function initPlants(){
+			plants.length = 0;
+			for(let i=0;i<NUM_PLANTS;i++){
+				const x = rand(40, W/dpr-40);
+				// larger trees: taller heights
+				const h = rand(80, 260);
+				plants.push({x, h, sway: rand(0.1,0.9), phase: Math.random()*Math.PI*2});
+			}
 		}
-	}
-</script>
+
+			// Night particles (fireflies)
+			const fireflies = [];
+			function initFireflies(){
+				fireflies.length = 0;
+				const horizonY = (H/dpr) - 40;
+				const maxY = Math.max(horizonY - 24, (H/dpr) * 0.85);
+				for(let i=0;i<40;i++){
+					fireflies.push({x: rand(20, W/dpr-20), y: rand(20, maxY), r: rand(0.6,1.8), phase: Math.random()*Math.PI*2});
+				}
+			}
+
+		// Croco agent
+		class Croco{
+			constructor(){
+				this.r = rand(12,28) * 2; // visual size (2x larger)
+				this.x = rand(this.r+20, W/dpr - this.r - 20);
+				// place croco near ground initially
+				this.y = (H/dpr - 40 - this.r*0.5) + rand(-4,4);
+				// gentler initial velocities
+				// reduce initial velocities to slow movement (factor 1/5)
+				this.vx = rand(-0.3,0.3) * 0.2;
+				this.vy = rand(-0.05,0.05) * 0.2;
+				this.angle = 0;
+				// much lower maximum speed to keep movement calm
+				this.speedCap = rand(0.15,0.45) * 0.2;
+				this.state = 'awake'; // 'awake' | 'sleep'
+				this.sleepTimer = 0;
+					// visual animation states
+					this.blinkTimer = rand(2,6) * 1000; // ms until next blink
+					this.blinkProgress = 0; // when blinking >0 indicates closing/opening
+					this.tailPhase = Math.random() * Math.PI * 2;
+					// facing: 1 = right, -1 = left
+					this.facing = this.vx < 0 ? -1 : 1;
+				// movement timer for sustained motion and target velocity (ms)
+				this.moveTimer = rand(3000, 12000);
+				this.targetVx = this.vx;
+						this.locked = false; // if true, croco won't move
+						this.lockTimer = 0;
+						this.nextIdle = rand(3000,15000);
+						// pick a sprite index (if sprites loaded later, this index will be used)
+						this.spriteIndex = Math.floor(Math.random() * 3); // 0..2
+						// DOM lottie player element (created on demand)
+						this._lottiePlayer = null;
+						this._lottieLoaded = false;
+			}
+
+			step(dt, timeOfDay){
+				// if locked (user chose no-move) or sleeping, reduce movement
+				if(this.locked || this.state === 'sleep'){
+					// idle: locked for a while, slight breathing
+					this.vx *= 0.92;
+					this.vy = 0;
+					if(this.lockTimer){ this.lockTimer -= dt; if(this.lockTimer <= 0) { this.lockTimer = 0; this.locked = false; } }
+				} else {
+					// decide occasionally to pause (idle)
+					this.nextIdle -= dt;
+					if(this.nextIdle <= 0 && Math.random() < 0.45){
+						this.locked = true;
+						this.lockTimer = rand(2000, 9000); // idle 2-9s
+						this.nextIdle = rand(8000, 30000); // schedule next idle
+					}
+
+					// sustained movement: keep a target velocity for a while to avoid twitching
+					this.moveTimer -= dt * (simSpeed || 1);
+					if(this.moveTimer <= 0){
+						// choose a sustained movement duration much longer to avoid twitching
+						this.moveTimer = rand(8000, 35000); // 8-35s
+						// pick a horizontal direction with a guaranteed minimal speed
+						const dir = Math.random() < 0.5 ? -1 : 1;
+						// choose slower sustained speeds
+						// choose slower sustained speeds (scaled down by 1/5)
+						const speed = rand(0.08, 0.35) * 0.2;
+						this.targetVx = dir * speed;
+						this.targetVy = 0; // keep on ground
+					}
+					// smoothly approach target velocity
+					this.vx += (this.targetVx - this.vx) * 0.06;
+					this.vy += (0 - this.vy) * 0.25; // quickly damp vertical
+				}
+				// limit speed
+				const sp = Math.hypot(this.vx, this.vy);
+				if(sp > this.speedCap){ this.vx *= this.speedCap/sp; this.vy *= this.speedCap/sp; }
+
+				// note: wrap-around is used, avoid forcing steering at edges which can cancel wrap
+
+				// apply velocity (horizontal only for main movement)
+				this.x += this.vx;
+				// y is handled by ground lock later
+
+				// wrap-around horizontally: preserve overflow so movement is continuous
+				const buffer = Math.max(30, this.r*1.5);
+				const width = W/dpr;
+				const span = width + buffer * 2;
+				if(this.x > width + buffer) this.x -= span;
+				else if(this.x < -buffer) this.x += span;
+
+				// small damping
+				this.vx *= 0.992; this.vy *= 0.99;
+
+				// face based on horizontal velocity
+				if(this.vx > 0.05) this.facing = 1;
+				else if(this.vx < -0.05) this.facing = -1;
+
+				// ensure crocos stay grounded (no flying)
+				const groundY = H/dpr - 40 - this.r*0.5;
+				// gently move toward groundY (prevents sudden teleport)
+				const dy = groundY - this.y;
+				this.y += dy * 0.12;
+				// remove vertical drift
+				this.vy = 0;
+
+						// blink animation timing
+						if(this.blinkProgress > 0){
+							this.blinkProgress -= dt;
+							if(this.blinkProgress < 0) this.blinkProgress = 0;
+						} else {
+							this.blinkTimer -= dt;
+							if(this.blinkTimer <= 0){ this.blinkProgress = 180; this.blinkTimer = rand(2,6) * 1000; }
+						}
+
+						// tail sway phase advances
+						this.tailPhase += dt * 0.004;
+
+						// Sleep logic: at night, crocos can sleep
+						if(timeOfDay.isNight){
+							if(this.state !== 'sleep' && Math.random() < 0.008){
+								// enter sleep: gently come to rest on the soil
+								this.state = 'sleep';
+								// place on ground (soil starts at H - 40)
+								this.y = Math.min(this.y, H/dpr - 40 - this.r*0.4);
+								this.vx = 0; this.vy = 0;
+								this.sleepTimer = rand(4000, 15000);
+							}
+						} else {
+							// wake up during day when timer passes or randomly
+							if(this.state === 'sleep'){
+								this.sleepTimer -= dt * (simSpeed || 1);
+								if(this.sleepTimer <= 0 || Math.random() < 0.01) this.state = 'awake';
+								else {
+									// while sleeping, small breathing bob
+									this.y += Math.sin(performance.now()*0.002 + this.tailPhase) * 0.15;
+									// make sure they stay on ground
+									this.y = Math.min(this.y, H/dpr - 40 - this.r*0.4);
+								}
+							}
+						}
+			}
+
+							draw(ctx){
+								// prefer trimmed frame PNGs (guaranteed transparent) from frames_trimmed/
+								try{
+									if(!window.__trimmedFrameCache) window.__trimmedFrameCache = {};
+									const base = 'EasterEggs/animations/crocodile/frames_trimmed/';
+									const frameCount = 40; // known number of frames extracted
+									const idx = Math.max(0, Math.floor((this.tailPhase*10) % frameCount));
+									const name = base + 'frame_' + String(idx).padStart(3,'0') + '.png';
+									let img = window.__trimmedFrameCache[name];
+									if(!img){ img = new Image(); img.src = name; window.__trimmedFrameCache[name] = img; }
+									if(img && img.complete && img.naturalWidth){
+										const drawW = this.r * 3.2;
+										const drawH = (img.height / img.width) * drawW;
+											ctx.save(); ctx.translate(this.x, this.y); ctx.scale(-this.facing,1);
+										ctx.drawImage(img, -drawW/2, -drawH/2, drawW, drawH);
+										ctx.restore();
+										return;
+									}
+								} catch(e){ /* ignore and continue to canvas fallback */ }
+								// Restored detailed vector crocodile: gradient body, snout, teeth, scutes, tail, eye
+								ctx.save();
+								ctx.translate(this.x, this.y);
+								ctx.scale(-this.facing, 1);
+								const s = this.r;
+
+								// prefer sprites if preloaded
+								if(window.__crocoSprites && Array.isArray(window.__crocoSprites)){
+									const sp = window.__crocoSprites[this.spriteIndex];
+									if(sp && sp.complete && sp.naturalWidth){
+										// slight bob/tilt animation
+										const bob = Math.sin(this.tailPhase*0.9) * (s*0.06);
+										const tilt = Math.sin(this.tailPhase*0.003) * 0.06 * this.facing;
+										ctx.save();
+										ctx.translate(0, bob);
+										ctx.rotate(tilt);
+										const img = sp;
+										const drawW = s * 3.2;
+										const drawH = (img.height / img.width) * drawW;
+										ctx.drawImage(img, -drawW/2, -drawH/2, drawW, drawH);
+										ctx.restore();
+										ctx.restore();
+										return;
+									}
+								}
+
+								// if a realistic local image was preloaded, draw it instead for a more natural look
+								if(window.__crocoImg && window.__crocoImg.complete && window.__crocoImg.naturalWidth){
+									const img = window.__crocoImg;
+									const imgW = img.width;
+									const imgH = img.height;
+									const drawW = s * 3.2;
+									const drawH = (imgH / imgW) * drawW;
+									ctx.drawImage(img, -drawW/2, -drawH/2, drawW, drawH);
+									ctx.restore();
+									return;
+								}
+
+								// subtle shadow under the croco
+								ctx.beginPath();
+								ctx.ellipse(0, s*0.65, s*1.8, s*0.45, 0, 0, Math.PI*2);
+								ctx.fillStyle = 'rgba(20,20,20,0.12)';
+								ctx.fill();
+
+								// main body path (slightly elongated oval with snout)
+								ctx.beginPath();
+								ctx.moveTo(-s*1.1, -s*0.1);
+								ctx.quadraticCurveTo(-s*1.6, -s*0.9, -s*1.9, -s*0.2);
+								ctx.quadraticCurveTo(-s*1.95, s*0.5, -s*1.1, s*0.9);
+								ctx.quadraticCurveTo(s*0.9, s*1.05, s*1.6, s*0.25);
+								ctx.quadraticCurveTo(s*1.85, -s*0.35, s*0.6, -s*0.95);
+								ctx.quadraticCurveTo(s*0.2, -s*1.15, -s*1.1, -s*0.1);
+								ctx.closePath();
+
+								// gradient fill
+								const g = ctx.createLinearGradient(-s*1.6, -s, s*1.6, s);
+								g.addColorStop(0, '#79b46a');
+								g.addColorStop(0.45, '#5fa84d');
+								g.addColorStop(1, '#3f7b2f');
+								ctx.fillStyle = g;
+								ctx.fill();
+
+								// belly
+								ctx.beginPath();
+								ctx.ellipse(-s*0.25, s*0.15, s*0.95, s*0.6, 0, 0, Math.PI*2);
+								ctx.fillStyle = '#eaf3d8';
+								ctx.fill();
+
+								// ridged back (a few triangular plates)
+								ctx.fillStyle = '#2f5d20';
+								for(let i=0;i<5;i++){
+									const tx = -s*0.6 + i*(s*0.45);
+									const height = s*0.35*(1 - i*0.08);
+									ctx.beginPath();
+									ctx.moveTo(tx - s*0.18, -s*0.25);
+									ctx.lineTo(tx + s*0.12, -s*0.25 - height);
+									ctx.lineTo(tx + s*0.42, -s*0.25);
+									ctx.closePath();
+									ctx.fill();
+								}
+
+								// snout and jaw
+								ctx.beginPath();
+								ctx.moveTo(s*1.05, -s*0.15);
+								ctx.quadraticCurveTo(s*1.35, -s*0.05, s*1.4, s*0.18);
+								ctx.quadraticCurveTo(s*1.25, s*0.3, s*1.05, s*0.15);
+								ctx.closePath();
+								ctx.fillStyle = '#5ba042';
+								ctx.fill();
+
+								// teeth (small triangles along snout lower edge)
+								ctx.fillStyle = '#fff';
+								for(let i=0;i<4;i++){
+									const tx = s*0.82 + i*(s*0.12);
+									ctx.beginPath();
+									ctx.moveTo(tx, s*0.06);
+									ctx.lineTo(tx + s*0.06, s*0.14);
+									ctx.lineTo(tx - s*0.06, s*0.14);
+									ctx.closePath();
+									ctx.fill();
+								}
+
+								// eye with eyelid and pupil
+								const blink = Math.max(0, 1 - this.blinkProgress);
+								ctx.save();
+								ctx.translate(s*0.85, -s*0.45);
+								ctx.scale(1, 1);
+								// white
+								ctx.beginPath();
+								ctx.ellipse(0,0,s*0.22,s*0.14,0,0,Math.PI*2);
+								ctx.fillStyle = '#fff';
+								ctx.fill();
+								// pupil
+								ctx.beginPath();
+								ctx.arc(0,0,s*0.08,0,Math.PI*2);
+								ctx.fillStyle = '#0b1b10';
+								ctx.fill();
+								// eyelid (blink) overlay
+								if(blink < 1){
+									ctx.beginPath();
+									ctx.fillStyle = 'rgba(80,100,60,0.95)';
+									ctx.rect(-s*0.3, -s*0.14, s*0.6, s*0.28*(1-blink));
+									ctx.fill();
+								}
+								ctx.restore();
+
+								// legs (simple, slightly shaded)
+								ctx.fillStyle = '#4f7a35';
+								for(let i=0;i<4;i++){
+									const lx = -s*0.6 + i*(s*0.5);
+									ctx.beginPath();
+									ctx.ellipse(lx, s*0.9, s*0.22, s*0.16, 0, 0, Math.PI*2);
+									ctx.fill();
+								}
+
+								// tail curl at the left end
+								ctx.beginPath();
+								ctx.moveTo(-s*1.6, s*0.05);
+								ctx.quadraticCurveTo(-s*1.95, s*0.12, -s*2.05, -s*0.12);
+								ctx.quadraticCurveTo(-s*1.9, -s*0.34, -s*1.5, -s*0.18);
+								ctx.fillStyle = '#4c8236';
+								ctx.fill();
+
+								// outline
+								ctx.lineWidth = Math.max(1, s*0.08);
+								ctx.strokeStyle = 'rgba(10,30,10,0.65)';
+								ctx.stroke();
+
+								ctx.restore();
+							}
+		}
+
+		// stars (randomized per session)
+		const stars = [];
+		function initStars(){
+			stars.length = 0;
+			const width = W/dpr, height = H/dpr;
+			const horizonY = height - 40;
+			const maxY = Math.max(horizonY - 24, height * 0.85);
+			// scale star density with canvas area (stars per pixel)
+			const area = width * height;
+			const density = 0.00035; // stars per px (tweakable)
+			let STAR_COUNT = Math.round(area * density);
+			STAR_COUNT = Math.max(120, Math.min(900, STAR_COUNT)); // clamp to reasonable range
+			for(let i=0;i<STAR_COUNT;i++){
+				stars.push({ x: rand(8, width-8), y: rand(8, maxY), w: (Math.random() < 0.14) ? 2 : 1, a: Math.random()*0.9 + 0.1, phase: Math.random()*Math.PI*2 });
+			}
+		}
+
+				// SVG sprite cache: key by integer size
+				const spriteCache = new Map();
+				function getCrocoSprite(r){
+					const key = Math.max(12, Math.round(r));
+					if(spriteCache.has(key)) return spriteCache.get(key);
+
+					// create an SVG representing a cute croco head/body
+					const w = Math.round(key*3.2);
+					const h = Math.round(key*1.6);
+							const svg = `
+							<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'>
+								<defs>
+									<filter id='s' x='-50%' y='-50%' width='200%' height='200%'>
+										<feDropShadow dx='0' dy='2' stdDeviation='2' flood-color='#000' flood-opacity='0.3'/>
+									</filter>
+								</defs>
+								<g filter='url(#s)'>
+									<!-- body -->
+									<path d='M${w*0.02},${h*0.6} C ${w*0.15},${h*0.25} ${w*0.45},${h*0.15} ${w*0.66},${h*0.18} C ${w*0.82},${h*0.20} ${w*0.92},${h*0.28} ${w*0.98},${h*0.44} C ${w*0.99},${h*0.6} ${w*0.88},${h*0.78} ${w*0.72},${h*0.86} C ${w*0.56},${h*0.95} ${w*0.32},${h*0.98} ${w*0.12},${h*0.9} C ${w*0.04},${h*0.86} ${w*0.01},${h*0.72} ${w*0.02},${h*0.6}' fill='#2f8a52'/>
+
+									<!-- belly -->
+									<path d='M${w*0.18},${h*0.64} C ${w*0.3},${h*0.5} ${w*0.5},${h*0.45} ${w*0.66},${h*0.48} C ${w*0.78},${h*0.5} ${w*0.9},${h*0.6} ${w*0.84},${h*0.7} C ${w*0.7},${h*0.84} ${w*0.46},${h*0.88} ${w*0.22},${h*0.82} C ${w*0.16},${h*0.8} ${w*0.14},${h*0.72} ${w*0.18},${h*0.64}' fill='#9fe2b9'/>
+
+									<!-- eye and pupil -->
+									<ellipse cx='${w*0.72}' cy='${h*0.38}' rx='${w*0.045}' ry='${h*0.045}' fill='#fff'/>
+									<circle cx='${w*0.735}' cy='${h*0.38}' r='${Math.max(1, key*0.09)}' fill='#000'/>
+
+									<!-- snout teeth -->
+									<g fill='#fff'>
+										<path d='M${w*0.62},${h*0.46} L ${w*0.64},${h*0.52} L ${w*0.66},${h*0.46} Z'/>
+										<path d='M${w*0.68},${h*0.46} L ${w*0.7},${h*0.52} L ${w*0.72},${h*0.46} Z'/>
+										<path d='M${w*0.56},${h*0.5} L ${w*0.58},${h*0.56} L ${w*0.6},${h*0.5} Z'/>
+									</g>
+
+									<!-- legs -->
+									<ellipse cx='${w*0.24}' cy='${h*0.86}' rx='${w*0.06}' ry='${h*0.03}' fill='#2a7a4b'/>
+									<ellipse cx='${w*0.46}' cy='${h*0.9}' rx='${w*0.055}' ry='${h*0.035}' fill='#2a7a4b'/>
+
+									<!-- tail tip accent -->
+									<path d='M${w*0.02},${h*0.6} C ${w*0.08},${h*0.58} ${w*0.06},${h*0.68} ${w*0.02},${h*0.6}' fill='rgba(0,0,0,0.06)'/>
+
+									<!-- stripes -->
+									<path d='M${w*0.34},${h*0.6} C ${w*0.4},${h*0.53} ${w*0.52},${h*0.48} ${w*0.62},${h*0.5}' stroke='#1e6036' stroke-width='${Math.max(2, key*0.06)}' fill='none' stroke-linecap='round'/>
+								</g>
+							</svg>`;
+
+					const img = new Image();
+					img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+					spriteCache.set(key, img);
+					return img;
+				}
+
+		function roundRect(ctx,x,y,w,h,r){
+			ctx.beginPath();
+			ctx.moveTo(x+r,y);
+			ctx.arcTo(x+w,y,x+w,y+h,r);
+			ctx.arcTo(x+w,y+h,x,y+h,r);
+			ctx.arcTo(x,y+h,x,y,r);
+			ctx.arcTo(x,y,x+w,y,r);
+			ctx.closePath();
+		}
+
+		function initCrocos(){
+			crocos.length = 0;
+			for(let i=0;i<NUM_CROCOS;i++) crocos.push(new Croco());
+		}
+
+		// try to preload a local realistic croco image (silent failure if missing)
+		function preloadLocalCroco(){
+			try{
+				// preload single realistic jpg
+				const img = new Image();
+				img.src = 'EasterEggs/images/crocodile.jpg';
+				img.onload = ()=>{ window.__crocoImg = img; };
+				img.onerror = ()=>{ window.__crocoImg = null; };
+
+				// preload sprite variants
+				window.__crocoSprites = [];
+				['EasterEggs/images/croco_sprite1.svg','EasterEggs/images/croco_sprite2.svg','EasterEggs/images/croco_sprite3.svg'].forEach((p,i)=>{
+					const s = new Image(); s.src = p; s.onload = ()=>{ window.__crocoSprites[i] = s; };
+					s.onerror = ()=>{ /* ignore */ };
+				});
+
+				// preload trimmed frames (from OpenGameArt sprites converted)
+				window.__crocoFrames = [];
+				(function(){
+					const base = 'EasterEggs/animations/crocodile/frames_trimmed/';
+					// assume frames named frame_000.png .. frame_039.png
+					for(let i=0;i<200;i++){
+						const name = 'frame_' + String(i).padStart(3,'0') + '.png';
+						const url = base + name;
+						const img = new Image();
+						img.src = url;
+						img.onload = ()=>{ window.__crocoFrames[i] = img; };
+						img.onerror = ()=>{ /* ignore missing frames */ };
+					}
+				})();
+			} catch(e){ window.__crocoImg = null; }
+		}
+
+			// preload generated frames (PNG sequence) if present
+			function preloadLottieFrames(){
+				// use the trimmed frames (transparent background) by default
+				const dir = 'EasterEggs/animations/crocodile/frames_trimmed/';
+				window.__crocoFrames = [];
+				// try to discover up to 200 frames
+				for(let i=0;i<200;i++){
+					const name = dir + 'frame_' + String(i).padStart(3,'0') + '.png';
+					const img = new Image();
+					img.src = name;
+					img.onload = (()=>{
+						const idx = i;
+						return ()=>{ window.__crocoFrames[idx] = img; };
+					})();
+					img.onerror = ()=>{ /* ignore missing */ };
+				}
+			}
+
+			// audio removed
+
+		// forced time controls
+		let forcedEnabled = false; // whether to use the forced time
+		let forcedTimeValue = {h:12, m:0};
+
+		// time of day helper
+		function getTimeState(){
+			let now = new Date();
+			if(forcedEnabled){
+				// create a Date with today's date but forced hour/min
+				now = new Date();
+				now.setHours(forcedTimeValue.h, forcedTimeValue.m, 0, 0);
+			}
+			const h = now.getHours();
+			const m = now.getMinutes();
+			const isNight = (h < 6 || h >= 20);
+			const isDusk = (h >= 18 && h < 20);
+			const isDawn = (h >=5 && h < 7);
+			return {now, h,m, isNight, isDusk, isDawn, isDay: !isNight && !isDusk && !isDawn};
+		}
+
+		// compute a night factor [0..1] where 0 = day, 1 = full night; fades in/out over twilightWindow hours
+		function computeNightFactor(hour){
+			const sr = 6, ss = 18; // sunrise/sunset
+			const twilight = 1.8; // hours over which stars/lucioles fade in/out
+			let h = (hour + 24) % 24;
+			// deep night (after sunset+twilight or before sunrise-twilight)
+			if(h >= ss + twilight || h <= sr - twilight) return 1;
+			// after sunset, fade in
+			if(h >= ss && h < ss + twilight) return (h - ss) / twilight;
+			// before sunrise, fade out (1 -> 0)
+			if(h >= sr - twilight && h < sr) return (sr - h) / twilight;
+			// daytime
+			return 0;
+		}
+
+		// draw background: sky, sun/moon, soil
+		function drawBackground(ctx, timeState, t){
+			// sky gradient based on time — smooth dawn/dusk transition
+			function lerp(a,b,t){ return a + (b-a)*t; }
+			function lerpColor(c1, c2, t){
+				// c1/c2 '#rrggbb' -> interpolate channels
+				const p1 = parseInt(c1.slice(1),16);
+				const p2 = parseInt(c2.slice(1),16);
+				const r = Math.round(lerp((p1>>16)&255, (p2>>16)&255, t));
+				const g = Math.round(lerp((p1>>8)&255, (p2>>8)&255, t));
+				const b = Math.round(lerp(p1&255, p2&255, t));
+				return '#' + [r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+			}
+
+			// base palettes
+			const dayTop = '#9fe7c6', dayBottom = '#6ad092';
+			const nightTop = '#071724', nightBottom = '#03202b';
+			const dawnWarmTop = '#ffbb88', dawnWarmBottom = '#ff6b4a';
+
+			// compute sun elevation fraction for smooth blending (0..1..0 across sunrise..sunset)
+			const hour = timeState.h + timeState.m/60;
+			const dayPos = (function(){
+				const sr = 6, ss = 18;
+				let h = (hour + 24) % 24;
+				if(h < sr || h > ss) return 0; // night
+				const tt = (h - sr) / (ss - sr);
+				return Math.sin(Math.PI * tt); // 0..1..0
+			})();
+
+			// dawn/dusk intensity based on proximity to sunrise/sunset (peak at edges)
+			const duskDawnIntensity = Math.max(0, 1 - Math.abs((hour - 12) / 6));
+
+			// mix colors: when dayPos is high use day palette, when low use night; add warm overlay near edges
+			let skyTop = lerpColor(nightTop, dayTop, dayPos);
+			let skyBottom = lerpColor(nightBottom, dayBottom, dayPos);
+			// warm tint during dawn/dusk: based on proximity to sunrise/sunset hours (windowed)
+			const sr = 6, ss = 18;
+			function timeDist(h,a){ let d = Math.abs(h-a); if(d > 12) d = 24 - d; return d; }
+			const warmWindow = 2.0; // hours around event where warm tint appears
+			const dist = Math.min(timeDist(hour, sr), timeDist(hour, ss));
+			const warmMix = Math.max(0, (warmWindow - dist) / warmWindow); // 1 at event, 0 beyond window
+			if(warmMix > 0.02){
+				skyTop = lerpColor(skyTop, dawnWarmTop, warmMix * 0.85);
+				skyBottom = lerpColor(skyBottom, dawnWarmBottom, warmMix * 0.95);
+			}
+
+			// gradient
+			const g = ctx.createLinearGradient(0,0,0,H/dpr);
+			g.addColorStop(0, skyTop);
+			g.addColorStop(1, skyBottom);
+			ctx.fillStyle = g; ctx.fillRect(0,0,W/dpr,H/dpr);
+
+			// compute sun/moon positions using a parametric day arc (sunrise -> noon -> sunset)
+			const width = W/dpr, height = H/dpr;
+			const margin = Math.max(40, width * 0.06);
+			const horizonY = height - 40; // top of soil
+			const arcHeight = Math.min(height * 0.6, horizonY - 40); // how high above horizon the sun rises
+
+			const sunrise = 6, sunset = 18;
+			function dayPosForHour(h){
+				// normalize to [0,24)
+				h = (h + 24) % 24;
+				if(h < sunrise || h > sunset) return null; // not in daytime range
+				const t = (h - sunrise) / (sunset - sunrise); // 0..1 across the day
+				// x moves linearly left->right across the sky
+				const cx = margin + t * (width - margin*2);
+				// y follows a semicircular arc: 0 at horizon -> 1 at noon -> 0 at horizon
+				const elevation = Math.sin(Math.PI * t); // 0..1..0
+				const cy = horizonY - elevation * arcHeight;
+				return {cx, cy, t};
+			}
+
+			// sun when daytime
+			const sunPos = dayPosForHour(hour);
+			if(sunPos){
+				const cx = sunPos.cx, cy = sunPos.cy;
+				// sun with glow
+				const rg = ctx.createRadialGradient(cx,cy,8,cx,cy,60);
+				rg.addColorStop(0, 'rgba(255,240,140,1)'); rg.addColorStop(1,'rgba(255,200,80,0)');
+				ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx,cy,60,0,Math.PI*2); ctx.fill();
+				ctx.fillStyle = '#fff08a'; ctx.beginPath(); ctx.arc(cx,cy,18,0,Math.PI*2); ctx.fill();
+			}
+
+			// moon is opposite the sun (follow same arc but offset by 12h)
+			const moonHour = (hour + 12) % 24;
+			const moonPos = dayPosForHour(moonHour);
+			if(!sunPos && moonPos){
+				const cx = moonPos.cx, cy = moonPos.cy;
+				ctx.fillStyle = 'rgba(255,255,230,0.97)';
+				ctx.beginPath(); ctx.arc(cx, cy, 24, 0, Math.PI*2); ctx.fill();
+				// small craters
+				ctx.fillStyle = 'rgba(0,0,0,0.06)'; ctx.beginPath(); ctx.arc(cx-6,cy-3,3,0,Math.PI*2); ctx.fill();
+			}
+
+			// soil at bottom
+			ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--soil') || '#3b2f24';
+			ctx.fillRect(0, H/dpr - 40, W/dpr, 40);
+
+					// stars at night (allow stars lower toward horizon but keep small margin above soil)
+							// compute night factor for gradual appearance of stars
+							const nf = computeNightFactor(timeState.h + timeState.m/60);
+							if(nf > 0.02){
+								for(const s of stars){
+									// twinkle alpha modulated by phase/time and night factor
+									const tw = 0.5 + 0.5 * Math.sin(t*0.001 + s.phase);
+									const alpha = Math.min(1, s.a * tw) * nf;
+									ctx.fillStyle = `rgba(255,255,230,${alpha})`;
+									if(s.w === 2) ctx.fillRect(s.x, s.y, 2, 2);
+									else ctx.fillRect(s.x, s.y, 1, 1);
+								}
+							}
+		}
+
+		// draw plants
+		function drawPlants(ctx, t){
+			for(const p of plants){
+				const sway = Math.sin(t*0.002*p.sway + p.phase) * Math.min(18, p.h*0.03);
+				const baseX = p.x, baseY = H/dpr - 40;
+				// stem (thicker for larger plants)
+				ctx.strokeStyle = '#1e6d3a'; ctx.lineWidth = Math.max(3, p.h * 0.03); ctx.beginPath(); ctx.moveTo(baseX, baseY); ctx.quadraticCurveTo(baseX + sway*0.5, baseY - p.h*0.45, baseX + sway, baseY - p.h); ctx.stroke();
+				// leaf clusters scaled with height
+				const leafW = Math.max(18, p.h * 0.18);
+				const leafH = Math.max(24, p.h * 0.22);
+				ctx.fillStyle = '#2aa05a'; ctx.beginPath(); ctx.ellipse(baseX + sway, baseY - p.h, leafW, leafH, -0.6, 0, Math.PI*2); ctx.fill();
+				ctx.beginPath(); ctx.ellipse(baseX + sway + leafW*0.35, baseY - p.h + leafH*0.35, leafW*0.9, leafH*0.8, 0.3, 0, Math.PI*2); ctx.fill();
+			}
+		}
+
+		// draw floating 'Zzz' for sleeping crocos
+		function drawZzz(ctx, croco, t){
+			if(croco.state !== 'sleep') return;
+			// compute a small rising offset and fade using tailPhase + time
+			const phase = (croco.tailPhase || 0) + t*0.0008;
+			const baseX = croco.x;
+			const baseY = (H/dpr) - 40 - croco.r - 8; // slightly above croco head
+			// three Zs with staggered timing
+			for(let i=0;i<3;i++){
+				const off = i * 14;
+				const y = baseY - (Math.sin(phase + i) * 6 + off*0.12);
+				const alpha = Math.max(0, 1 - (i*0.25) - ((Math.sin(phase + i)+1)/2)*0.4);
+				ctx.save();
+				ctx.translate(baseX - croco.r*0.2 + i*6, y);
+				ctx.rotate(-0.18 + i*0.06);
+				ctx.font = `${Math.max(12, croco.r*0.35)}px serif`;
+				ctx.fillStyle = `rgba(223,240,255,${alpha})`;
+				ctx.fillText('z', 0, 0);
+				ctx.restore();
+			}
+		}
+
+			function drawFireflies(ctx, t, timeState){
+				// use night factor to fade fireflies in/out
+				const nf = computeNightFactor(timeState.h + timeState.m/60);
+				if(nf <= 0.02) return;
+				for(const f of fireflies){
+					const ax = Math.cos(t*0.001 + f.phase) * 6;
+					const ay = Math.sin(t*0.0015 + f.phase*1.3) * 3;
+					const x = f.x + ax; const y = f.y + ay;
+					const glow = 0.6 + Math.sin(t*0.008 + f.phase)*0.4;
+					ctx.beginPath(); ctx.fillStyle = `rgba(255,245,140,${0.08*glow*nf})`; ctx.arc(x,y,f.r*4,0,Math.PI*2); ctx.fill();
+					ctx.beginPath(); ctx.fillStyle = `rgba(255,245,140,${0.9*glow*nf})`; ctx.arc(x,y,f.r*1.2,0,Math.PI*2); ctx.fill();
+				}
+			}
+
+		// main loop
+		let last = performance.now();
+	    // allow forcing day/night for testing
+	    let forcedMode = null; // 'day' | 'night' | null
+		function loop(now){
+			const dt = now - last; last = now;
+			const t = now;
+
+			let timeState = getTimeState();
+			if(forcedMode){
+				if(forcedMode === 'day') timeState = {...timeState, isNight:false, isDusk:false, isDawn:false, isDay:true};
+				if(forcedMode === 'night') timeState = {...timeState, isNight:true, isDusk:false, isDawn:false, isDay:false};
+			}
+			document.getElementById('timeText').textContent = timeState.h + ':' + String(timeState.m).padStart(2,'0');
+
+			// set body background color based on time
+			if(timeState.isNight) document.body.style.background = getComputedStyle(document.documentElement).getPropertyValue('--bg-night');
+			else if(timeState.isDusk) document.body.style.background = getComputedStyle(document.documentElement).getPropertyValue('--bg-dusk');
+			else document.body.style.background = getComputedStyle(document.documentElement).getPropertyValue('--bg-day');
+
+			// draw
+			drawBackground(ctx, timeState, t);
+			drawPlants(ctx, t);
+			drawFireflies(ctx, t, timeState);
+
+			// update & draw crocos (respect pause and simSpeed)
+			for(const c of crocos){
+				if(!paused) c.step(dt * simSpeed, timeState);
+				c.draw(ctx);
+				// animated sleeping Zzz
+				drawZzz(ctx, c, t);
+			}
+
+			requestAnimationFrame(loop);
+		}
+
+		// initialize everything
+		function resetAll(){
+			resize();
+			initPlants();
+			initCrocos();
+				initFireflies();
+				initStars();
+				preloadLocalCroco();
+				preloadLottieFrames();
+		}
+
+		resetAll();
+		requestAnimationFrame(loop);
+
+		// NOTE: do NOT auto-enable Lottie. Prefer trimmed PNG frames by default to avoid white boxes.
+
+		// --- Lottie support (lazy) -------------------------------------------------
+		window.__useLottie = false; // default: off
+
+		async function loadLottieRuntime(){
+			if(window.__lottie) return window.__lottie;
+			// load lottie-web from CDN
+			await new Promise((res,rej)=>{
+				const s = document.createElement('script');
+				s.src = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js';
+				s.onload = res; s.onerror = rej; document.head.appendChild(s);
+			});
+			window.__lottie = window.lottie;
+			return window.__lottie;
+		}
+
+		async function loadLottieData(){
+			if(window.__lottieData) return window.__lottieData;
+			try{
+				const resp = await fetch('EasterEggs/animations/crocodile/animations/12345.json');
+				if(!resp.ok) throw new Error('fetch failed');
+				window.__lottieData = await resp.json();
+				return window.__lottieData;
+			}catch(e){ console.warn('Failed to load lottie JSON', e); return null; }
+		}
+
+		// toggle and initialize lottie
+		async function enableLottie(enable){
+			if(enable){
+				await loadLottieRuntime();
+				await loadLottieData();
+				if(!window.__lottieData) return false;
+				window.__useLottie = true;
+				return true;
+			} else {
+				window.__useLottie = false;
+				// remove any existing player DOMs
+				document.querySelectorAll('#lottieLayer > div').forEach(d=>d.remove());
+				return true;
+			}
+		}
+
+		// quick toggle with 'L' key for testing
+		document.addEventListener('keydown', async (e)=>{ if(e.key === 'L' || e.key === 'l'){ if(!window.__useLottie) await enableLottie(true); else await enableLottie(false); } });
+
+			// click/dblclick interactions removed per user request
+
+		// watch for visibility change to pause
+		let paused = false;
+		document.addEventListener('visibilitychange', ()=>{ paused = document.hidden; if(paused) cancelAnimationFrame(loop); else { last = performance.now(); requestAnimationFrame(loop); } });
+
+		// re-init when resizing settles
+		let resizeTimer; window.addEventListener('resize', ()=>{ clearTimeout(resizeTimer); resizeTimer = setTimeout(resetAll, 150); });
+
+		// expose small debug in console
+		window.__terrarium = {crocos, plants, resetAll};
+
+		    // controls wiring
+			const btnPause = document.getElementById('btnPause');
+			const btnAdd = document.getElementById('btnAdd');
+			const btnRemove = document.getElementById('btnRemove');
+			const forceCheckbox = document.getElementById('forceCheckbox');
+			const forceTime = document.getElementById('forceTime');
+
+			btnPause.addEventListener('click', ()=>{ paused = !paused; btnPause.textContent = paused ? 'Play' : 'Pause'; if(!paused){ last = performance.now(); requestAnimationFrame(loop); } });
+			btnAdd.addEventListener('click', ()=>{ if(crocos.length < 60) crocos.push(new Croco()); });
+			btnRemove.addEventListener('click', ()=>{ if(crocos.length) crocos.pop(); });
+
+			// wire forced time inputs
+			forceCheckbox.addEventListener('change', ()=>{
+				forcedEnabled = !!forceCheckbox.checked;
+			});
+			// remember last input to detect minute wrap when using arrow keys
+			let lastForceTime = {h: forcedTimeValue.h, m: forcedTimeValue.m};
+			forceTime.addEventListener('input', ()=>{
+				const v = forceTime.value || '12:00';
+				const parts = v.split(':');
+				let hh = parseInt(parts[0],10);
+				let mm = parseInt(parts[1],10);
+				if(Number.isNaN(hh)) hh = lastForceTime.h;
+				if(Number.isNaN(mm)) mm = lastForceTime.m;
+				// detect minute wrap caused by arrow step
+				if(lastForceTime){
+					if(lastForceTime.m === 59 && mm === 0 && hh === lastForceTime.h){
+						hh = (lastForceTime.h + 1) % 24;
+					} else if(lastForceTime.m === 0 && mm === 59 && hh === lastForceTime.h){
+						hh = (lastForceTime.h + 23) % 24;
+					}
+				}
+				forcedTimeValue.h = Math.max(0, Math.min(23, hh));
+				forcedTimeValue.m = Math.max(0, Math.min(59, mm));
+				lastForceTime = {h: forcedTimeValue.h, m: forcedTimeValue.m};
+				// normalize displayed value
+				forceTime.value = String(forcedTimeValue.h).padStart(2,'0') + ':' + String(forcedTimeValue.m).padStart(2,'0');
+			});
+
+
+			// occasionally have a croco 'yawn' at dusk/dawn
+			// occasional small impulse (yawn) scaled down to keep things slow
+			setInterval(()=>{
+				if(crocos.length){ const c = crocos[Math.floor(Math.random()*crocos.length)]; if(c) { c.vx += rand(-0.8,0.8) * 0.2; c.vy += rand(-0.6,0.6) * 0.2; } }
+			}, 2200);
+	</script>
 
 </body>
 </html>
