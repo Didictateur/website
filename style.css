@@ -1,21 +1,28 @@
 :root{
-  --bg: #f6f8fb;
+  --bg: linear-gradient(135deg, #f6f8fb 0%, #e6f3ff 50%, #eefaf9 100%);
   --card: #ffffff;
   --muted: #6b7280;
   --accent: #2563eb;
-  --accent-2: #0ea5a4;
+  --accent-2: #10b981;
   --text: #0f172a;
   --radius: 12px;
 }
 
 *{box-sizing:border-box}
 
-html,body{height:100%}
+html, body {height:100%}
+
+html{
+  background: var(--bg);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 
 body{
   margin:0;
   font-family: Inter, "EB Garamond", serif;
-  background:var(--bg);
+  background: transparent;
   color:var(--text);
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
@@ -29,7 +36,7 @@ body{
 }
 
 .site-header{
-  background:linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6));
+  background: linear-gradient(90deg, rgba(16,185,129,0.06), rgba(37,99,235,0.04));
   backdrop-filter: blur(4px);
   border-bottom:1px solid rgba(15,23,42,0.06);
 }
@@ -43,7 +50,7 @@ body{
 .brand{
   font-weight:700;
   font-size:20px;
-  color:var(--text);
+  color:var(--accent-2);
   text-decoration:none;
 }
 .nav{
@@ -53,7 +60,19 @@ body{
   align-items:center;
 }
 .nav a{color:var(--muted); text-decoration:none; padding:8px 12px; border-radius:8px}
-.nav a:hover{color:var(--accent); background:rgba(37,99,235,0.06)}
+.nav a:hover{color:var(--accent); background:rgba(37,99,235,0.08)}
+
+.profile-card{position:relative; overflow:visible}
+.profile-card::before{
+  content:"";
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:6px;
+  border-radius:8px 0 0 8px;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+}
+
+.main-card{border-top:6px solid; border-top-color:rgba(16,185,129,0.12)}
 
 .layout{display:grid; grid-template-columns: 300px 1fr; gap:24px; align-items:start}
 
@@ -71,14 +90,11 @@ body{
 .contact-list li{margin:10px 0}
 .contact-list a{color:var(--accent); text-decoration:none}
 
-/* Make the profile image link visually neutral but still clickable.
-   Targets only the anchor that is a direct child of .profile-card (the image link)
-   so other links (email, github) keep normal link behavior. */
 .profile-card > a{
   display:inline-block;
-  line-height:0; /* avoid extra gap */
+  line-height:0;
   text-decoration:none;
-  cursor: default; /* show normal cursor instead of pointer */
+  cursor: default;
   border: none;
 }
 .profile-card > a img{display:block}
@@ -98,6 +114,9 @@ h1,h2,h3{font-family:'EB Garamond', serif; color:var(--text); margin-top:0}
 h1{font-size:28px}
 h2{font-size:20px}
 
+main-card h1{color:var(--accent)}
+.main-card h2{color:var(--accent-2)}
+
 .section{margin-bottom:18px}
 
 .card-list{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px}
@@ -113,24 +132,15 @@ li{margin:8px 0}
   text-align:center;
 }
 
-/* Responsive */
 @media (max-width:900px){
   .layout{grid-template-columns:1fr}
   .nav{display:none}
   .container{padding:16px}
 }
 
-/* small helpers */
 .muted{color:var(--muted)}
 .pill{display:inline-block; padding:6px 10px; background:rgba(37,99,235,0.08); color:var(--accent); border-radius:999px; font-size:13px}
 
-/* Easter egg link: render like plain text (no color/underline/cursor change on hover) */
-/* Keep it accessible (still focusable) but visually identical to surrounding text */
-/* Make the easter egg link look like normal text but remain clickable.
-   - color: inherit so it matches surrounding text
-   - no underline and no hover color change
-   - cursor: text so it doesn't show the pointer hand
-   - keep a visible focus outline for keyboard users (accessibility) */
 a#easteregg,
 a#easteregg:link,
 a#easteregg:visited,
@@ -142,8 +152,7 @@ a#easteregg:active{
   cursor: text !important;
 }
 
-/* Visible but subtle focus for keyboard users */
-a#easteregg:focus{
+#easteregg:focus{
   outline: 2px dashed rgba(37,99,235,0.28);
   outline-offset: 3px;
 }
