@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <title>Riichi — Decosse Adrien</title>
+    <style>
+      main.container{
+        padding:0;
+        max-width:none;
+        width:100vw;
+      }
+
+      .iframe-wrapper{
+        width:100vw;
+        height:calc(100vh - 80px);
+        margin:0;
+      }
+
+      .embed-frame{
+        width:100vw;
+        height:100%;
+        border:0;
+        display:block;
+      }
+      html,body{height:100%;}
+      body{margin:0;}
+
+      .site-header{position:relative;z-index:20}
+      .iframe-wrapper{position:relative;z-index:10}
+    </style>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href="index.html">Decosse Adrien</a>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="index.html">Accueil</a>
+          <a href="syllabus.html">Syllabus</a>
+          <a href="cours/index.html">Cours</a>
+          <a href="riichi.html">Riichi</a>
+          <a href="croco.html">Crocoloop</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="iframe-wrapper">
+        <iframe id="riichiFrame" class="embed-frame" src="riichi/index.html" title="Riichi submodule content" frameborder="0" loading="lazy"></iframe>
+      </div>
+    </main>
+
+    <script>
+      (function(){
+        const iframe = document.getElementById('riichiFrame');
+        const header = document.querySelector('.site-header');
+        const wrapper = document.querySelector('.iframe-wrapper');
+        function resize(){
+          const headerH = header ? header.getBoundingClientRect().height : 0;
+          const avail = window.innerHeight - headerH;
+          const h = Math.max(300, avail - 20);
+          wrapper.style.height = h + 'px';
+          iframe.style.height = h + 'px';
+        }
+        window.addEventListener('resize', resize);
+        window.addEventListener('load', resize);
+        setTimeout(resize, 250);
+      })();
+    </script>
+  </body>
+</html>
