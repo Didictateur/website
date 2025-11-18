@@ -157,3 +157,14 @@ a#easteregg:active{
   outline-offset: 3px;
 }
 
+.markdown-content{color:var(--text); line-height:1.7}
+.markdown-content h1{font-size:22px; color:var(--accent); margin-top:0}
+.markdown-content h2{font-size:18px; color:var(--accent-2); margin-bottom:6px}
+.markdown-content h3{font-size:16px; margin-bottom:6px}
+.markdown-content p{margin:0 0 10px}
+.markdown-content a{color:var(--accent)}
+.markdown-content ul{padding-left:1.2rem; margin-bottom:12px}
+.markdown-content li{margin-bottom:6px}
+.markdown-content pre{background:rgba(15,23,42,0.03); padding:12px; border-radius:8px; overflow:auto}
+.markdown-content blockquote{border-left:4px solid rgba(16,185,129,0.12); padding:8px 12px; color:var(--muted); background:rgba(16,185,129,0.02); border-radius:6px}
+
