@@ -1,44 +1,150 @@
-* {
-  box-sizing: border-box;
+:root{
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --accent-2: #0ea5a4;
+  --text: #0f172a;
+  --radius: 12px;
 }
 
-#pp {
-  border-radius: 50%;
-  width: 320px;
-  height: 400px;
+*{box-sizing:border-box}
+
+html,body{height:100%}
+
+body{
+  margin:0;
+  font-family: Inter, "EB Garamond", serif;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.6;
 }
 
-.row {  
-  display: flex;
-  flex-wrap: wrap;
+.container{
+  max-width:1100px;
+  margin:0 auto;
+  padding:24px;
 }
 
-.side {
-  flex: 20%;
-  padding: 20px;
+.site-header{
+  background:linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6));
+  backdrop-filter: blur(4px);
+  border-bottom:1px solid rgba(15,23,42,0.06);
+}
+.site-header .container{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding-top:18px;
+  padding-bottom:18px;
+}
+.brand{
+  font-weight:700;
+  font-size:20px;
+  color:var(--text);
+  text-decoration:none;
+}
+.nav{
+  margin-left:auto;
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+.nav a{color:var(--muted); text-decoration:none; padding:8px 12px; border-radius:8px}
+.nav a:hover{color:var(--accent); background:rgba(37,99,235,0.06)}
+
+.layout{display:grid; grid-template-columns: 300px 1fr; gap:24px; align-items:start}
+
+.profile-card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:0 6px 20px rgba(15,23,42,0.06);
+  text-align:center;
+}
+.profile-card img{border-radius:50%; width:160px; height:160px; object-fit:cover; display:block; margin:0 auto 12px}
+.profile-card h2{margin:6px 0 2px;font-size:18px}
+.profile-card .meta{color:var(--muted); font-size:14px}
+.contact-list{list-style:none; padding:0; margin:12px 0 0; text-align:left}
+.contact-list li{margin:10px 0}
+.contact-list a{color:var(--accent); text-decoration:none}
+
+/* Make the profile image link visually neutral but still clickable.
+   Targets only the anchor that is a direct child of .profile-card (the image link)
+   so other links (email, github) keep normal link behavior. */
+.profile-card > a{
+  display:inline-block;
+  line-height:0; /* avoid extra gap */
+  text-decoration:none;
+  cursor: default; /* show normal cursor instead of pointer */
+  border: none;
+}
+.profile-card > a img{display:block}
+.profile-card > a:focus{
+  outline: 2px dashed rgba(37,99,235,0.28);
+  outline-offset: 3px;
 }
 
-.main {
-  flex: 70%;
-  padding: 20px;
-  background: whitesmoke;
+.main-card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:0 6px 20px rgba(15,23,42,0.04);
 }
 
-.flag {
-  width: 80px;
-  float: right;
+h1,h2,h3{font-family:'EB Garamond', serif; color:var(--text); margin-top:0}
+h1{font-size:28px}
+h2{font-size:20px}
+
+.section{margin-bottom:18px}
+
+.card-list{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px}
+
+a{color:var(--accent);}
+
+ul{padding-left:1.1rem}
+li{margin:8px 0}
+
+.footer{
+  padding:20px 0;
+  color:var(--muted);
+  text-align:center;
 }
 
-li{
-  margin: 10px 0;
+/* Responsive */
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .nav{display:none}
+  .container{padding:16px}
 }
 
-body {
-  font-family: 'EB Garamond', serif;
-  font-size: 18px;
-  background: royalblue;
+/* small helpers */
+.muted{color:var(--muted)}
+.pill{display:inline-block; padding:6px 10px; background:rgba(37,99,235,0.08); color:var(--accent); border-radius:999px; font-size:13px}
+
+/* Easter egg link: render like plain text (no color/underline/cursor change on hover) */
+/* Keep it accessible (still focusable) but visually identical to surrounding text */
+/* Make the easter egg link look like normal text but remain clickable.
+   - color: inherit so it matches surrounding text
+   - no underline and no hover color change
+   - cursor: text so it doesn't show the pointer hand
+   - keep a visible focus outline for keyboard users (accessibility) */
+a#easteregg,
+a#easteregg:link,
+a#easteregg:visited,
+a#easteregg:hover,
+a#easteregg:active{
+  color: inherit !important;
+  text-decoration: none !important;
+  background: transparent !important;
+  cursor: text !important;
 }
 
-#easteregg {
-  color: black;
+/* Visible but subtle focus for keyboard users */
+a#easteregg:focus{
+  outline: 2px dashed rgba(37,99,235,0.28);
+  outline-offset: 3px;
 }
+
