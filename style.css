@@ -74,17 +74,17 @@ body{
 
 .main-card{border-top:6px solid; border-top-color:rgba(16,185,129,0.12)}
 
-.layout{display:grid; grid-template-columns: 300px 1fr; gap:24px; align-items:start}
+.layout{display:grid; grid-template-columns: 350px 1fr; gap:24px; align-items:start}
 
 .profile-card{
   background:var(--card);
   border-radius:var(--radius);
-  padding:18px;
+  padding:24px;
   box-shadow:0 6px 20px rgba(15,23,42,0.06);
   text-align:center;
 }
-.profile-card img{border-radius:50%; width:160px; height:160px; object-fit:cover; display:block; margin:0 auto 12px}
-.profile-card h2{margin:6px 0 2px;font-size:18px}
+.profile-card img{border-radius:50%; width:200px; height:200px; object-fit:cover; display:block; margin:0 auto 16px}
+.profile-card h2{margin:8px 0 4px;font-size:20px}
 .profile-card .meta{color:var(--muted); font-size:14px}
 .contact-list{list-style:none; padding:0; margin:12px 0 0; text-align:left}
 .contact-list li{margin:10px 0}
