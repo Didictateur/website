@@ -153,7 +153,29 @@ li{margin:8px 0}
 
 @media (max-width:900px){
   .layout{grid-template-columns:1fr}
-  .nav{display:none}
+  /* On mobile, empile le header et affiche la navigation verticalement
+     au lieu de la masquer. Cela permet d'avoir les liens "Accueil", "Syllabus",
+     etc. visibles sur petit écran. */
+  .site-header .container{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+  }
+  .nav{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    width:100%;
+    margin-left:0;
+  }
+  .nav a{
+    display:block;
+    width:100%;
+    padding:8px 10px;
+    border-radius:8px;
+    color:var(--muted);
+  }
+  .nav a:hover{color:var(--accent); background:rgba(37,99,235,0.06)}
   .container{padding:16px}
 }
 
