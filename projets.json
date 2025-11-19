@@ -1,0 +1,24 @@
+[
+  {
+    "id": "riichi",
+    "title": "Riichi",
+    "description": "Simulateur et outils pour mahjong Riichi — moteurs, visualisations et tests.",
+    "tech": ["TypeScript","JS","Web"],
+    "image": "projects/img/riichi-tile.svg",
+    "repo": "https://github.com/decosse-adrien/riichi",
+    "live": "riichi/index.html",
+    "featured": true,
+    "date": "2024-03-12"
+  },
+  {
+    "id": "prototype-2",
+    "title": "Prototype 2",
+    "description": "Prototype en développement (ne pas encore mettre en avant).",
+    "tech": ["C","expérimental"],
+    "image": "projects/img/chess-pawn.svg",
+    "repo": "",
+    "live": "prototype2.html",
+    "featured": false,
+    "date": "2025-01-01"
+  }
+]
