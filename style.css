@@ -90,6 +90,25 @@ body{
 .contact-list li{margin:10px 0}
 .contact-list a{color:var(--accent); text-decoration:none}
 
+/* Skills bar: each bar composed of 6 segments; add/remove 'filled' on .segment to change level */
+.skills{margin-top:14px; text-align:center}
+.skills h3{margin:6px 0 10px; font-size:16px; color:var(--text); font-weight:700}
+.skill-list{list-style:none; padding:0; margin:0; display:grid; gap:10px; text-align:left}
+.skill-list{list-style:none; padding:0; margin:0; display:grid; gap:10px}
+.skill{display:flex; align-items:center; gap:12px}
+.skill-name{width:100px; font-weight:600; color:var(--muted); font-size:14px}
+.skill-bar{flex:1; display:flex; gap:6px; align-items:center}
+.skill-bar .segment{flex:1; height:10px; background:rgba(15,23,42,0.06); border-radius:6px}
+.skill-bar .segment.filled{background: linear-gradient(90deg, var(--accent), var(--accent-2)); box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset}
+.skill-bar .segment:first-child{border-radius:6px 4px 4px 6px}
+.skill-bar .segment:last-child{border-radius:4px 6px 6px 4px}
+
+@media (max-width:600px){
+  .skill{gap:8px}
+  .skill-name{width:90px; font-size:13px}
+  .skill-bar .segment{height:9px}
+}
+
 .profile-card > a{
   display:inline-block;
   line-height:0;
