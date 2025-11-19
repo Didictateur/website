@@ -36,9 +36,16 @@
 	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 	<script>
 		// Render the syllabus content (markdown -> HTML) inside the page.
-		const contenuMarkdown = `# My ENS Syllabus
+		const contenuMarkdown = `# My Syllabus
 
-## Aggregation
+## M2
+### First semester
+
+## Agregation
+The syllabus is the 2025 french academic programme of
+- [High School](./agreg/Terminal.pdf)
+- [MPI](./agreg/MPI.pdf)
+- [Licence](./agreg/Licence.pdf)
 
 ## M1
 ### First semester
@@ -73,12 +80,6 @@
 - Image processing with [Emmanuel Caruyer](http://www.emmanuelcaruyer.com)
 - Logic with [David Baelde](http://www.lsv.fr/~baelde/)
 - Object programming with C with [Martin Quinson](https://people.irisa.fr/Martin.Quinson/)
-
-## Agregation
-The syllabus is the french academic programme of
-- [High School](./agreg/Terminal.pdf)
-- [MPI](./agreg/MPI.pdf)
-- [Licence](./agreg/Licence.pdf)
 `;
 
 		document.getElementById('contenu-markdown').innerHTML = marked.parse(contenuMarkdown);
