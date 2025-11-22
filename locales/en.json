@@ -1,0 +1,80 @@
+{
+  "license": "© Adrien Decosse — personal website",
+
+  "nav.home": "Home",
+  "nav.syllabus": "Syllabus",
+  "nav.cours": "Courses",
+  "nav.riichi": "Riichi",
+  "nav.croco": "Crocoloop",
+  "nav.cv": "CV",
+
+  "lang.fr": "Français",
+  "lang.en": "English",
+
+  "projects.title": "Projects",
+  "projects.muted": "My personal projects that I have worked on so far.",
+  "project.riichi.title": "Riichi",
+  "project.riichi.desc": "Simulator and tools for Riichi mahjong — engines, visualisations and tests.",
+  "project.prototype.title": "ChessNut",
+  "project.prototype.desc": "Online, self-hostable game: a chess variant with Action cards.",
+  "project.tutorial.title": "Riichi Mahjong tutorial",
+  "project.tutorial.desc": "Interactive online tutorial to learn how to play Riichi Mahjong.",
+  "project.chess.title": "ChessNut",
+  "project.chess.desc": "Online, self-hostable game: a chess variant with Action cards.",
+
+  "home.pres.desc": "Computer science student - ENS Rennes",
+  "home.pres.tel": "Phone",
+  "home.pres.mail": "E-mail",
+  "home.pres.github.pro": "GitHub pro",
+  "home.pres.github.perso": "GitHub personal",
+  "home.pres.competences": "Skills",
+
+  "home.presentation.title": "Presentation",
+
+  "home.presentation.cursus": "Educational background",
+  "home.presentation.annees": "Years",
+  "home.presentation.ens": "License 3 and Master 1 in the computer science curriculum at <a href=\"https://www.ens-rennes.fr/\">ENS Rennes</a>. The courses taken during this curriculum are presented in this <a href=\"/syllabus.html\">syllabus</a>.",
+  "home.presentation.prepa": "Three years in preparatory class at the high school <a href=\"https://lycee-champollion.fr/\">Champollion</a>, including two years in MP* and in the X-ENS preparation group.",
+  "home.presentation.lycee": "After studying at the middle-high school <a href=\"https://www.la-favorite.org/\">La Favorite</a>, I obtained the scientific Baccalauréat with honors.",
+
+  "home.presentation.experience": "Experiences",
+
+  "home.presentation.stage.title": "Research team work",
+  "home.presentation.stage.desc": "During the summer of 2023, I completed a two-month internship within the <a href=\"https://www.inria.fr/en/elan\">Elan</a> team at Inria Grenoble. I had the opportunity to work daily with PhD students.",
+  "home.presentation.concours.title": "Competitions",
+  "home.presentation.concours.desc": "I participated in the general competitions of mathematics, physics and SVT in 2019. In 2018, I was ranked 25th regionally in the mathematics olympiad. In 2019, I obtained second place in a public speaking competition organized by my high school.",
+  "home.presentation.cours.title": "External courses",
+  "home.presentation.cours.desc": "Between 2018 and 2019, I attended mathematics courses given by the <a href=\"https://www.ens-lyon.fr\">ENS Lyon</a> on Sundays from 8am to 2pm. I also volunteered to tutor middle school students.",
+  "home.presentation.autres.titles": "Others",
+  "home.presentation.autres.desc": "During middle school, I obtained the aeronautical initiation certificate (2016) and attended various scientific conferences. I also completed a one-month internship at the company <a href=\"https://www.climb-up.fr/\">Climb Up</a>.",
+
+  "home.presentation.cultures.title": "Cultural interests",
+  "home.presentation.cultures.theatre.title": "Theatre",
+  "home.presentation.cultures.theatre.desc": "I grew up in the world of theatre — ~10 years of experience before preparatory class. At <a href=\"https://www.ens-rennes.fr/\">ENS Rennes</a>, I acted and sang in the musical and in the choir; I was in charge of the musical and president of the choir. No matter what anyone says, my favorite author is Samuel Beckett.",
+  "home.presentation.cultures.sport.title": "Sport",
+  "home.presentation.cultures.sport.desc": "Practicing high-altitude activities: climbing, mountaineering, skiing, etc.",
+  "home.presentation.cultures.jeux.title": "Favorite indie games",
+  "home.presentation.cultures.jeux.desc": "Outer Wilds, Undertale, Tunic, Fez, The Moonstone Equation.",
+
+  "syllabus.title": "My syllabus",
+  
+  "syllabus.M2": "Master 2",
+  "syllabus.M2.sem1": "First semester",
+  "syllabus.M2.sem2": "Second semester",
+  "syllabus.M2.sem1.desc": "",
+
+  "syllabus.agreg": "Agrégation preparation",
+  "syllabus.agreg.desc": "<p>The syllabus is the 2025 French academic programme:</p>\n<ul>\n  <li><a href='./agreg/Terminal.pdf'>High School (Terminale)</a></li>\n  <li><a href='./agreg/MPI.pdf'>MPI</a></li>\n  <li><a href='./agreg/Licence.pdf'>Licence</a></li>\n</ul>",
+
+  "syllabus.M1": "Master 1",
+  "syllabus.M1.sem1": "First semester",
+  "syllabus.M1.sem1.desc": "<ul>\n  <li>Advanced operating systems with <a href='https://team.inria.fr/pacap/members/isabelle-puaut/'>Isabelle Puaut</a></li>\n  <li>Complexity theory with <a href='https://people.irisa.fr/Francois.Schwarzentruber/'>François Schwarzentruber</a></li>\n  <li>Software formal analysis and design with <a href='http://people.irisa.fr/Thomas.Genet/'>Thomas Genet</a></li>\n  <li>Digital sobriety with <a href='http://www.irisa.fr/lande/ridoux/page.pro.e.html'>Olivier Ridoux</a></li>\n  <li>Signal processing with <a href='https://nkeriven.github.io/'>Nicolas Keriven</a></li>\n</ul>",
+  "syllabus.M1.sem2": "Second semester",
+  "syllabus.M1.sem2.desc": "<ul>\n  <li>Information theory and coding with <a href='http://people.rennes.inria.fr/Eric.Fabre/'>Eric Fabre</a></li>\n  <li>General compiler concepts with <a href='https://people.irisa.fr/Simon.Rokicki/'>Simon Rokicki</a></li>\n  <li>Machine learning with <a href='http://people.irisa.fr/Ewa.Kijak'>Ewa Kijak</a></li>\n  <li>Computer graphics with <a href='https://people.irisa.fr/Marc.Christie/'>Marc Christie</a></li>\n  <li>Epistemology with <a href='https://philo.univ-rennes.fr/interlocuteurs/filipe-drapeau-vieira-contim'>Filipe Drapeau-Contim</a></li>\n</ul>",
+
+  "syllabus.L3": "License 3",
+  "syllabus.L3.sem1": "First semester",
+  "syllabus.L3.sem1.desc": "<ul>\n  <li>Algorithmics 1 with <a href='https://people.irisa.fr/Francois.Schwarzentruber/'>François Schwarzentruber</a></li>\n  <li>System architecture 1 with <a href='https://people.irisa.fr/Steven.Derrien/wordpress'>Steven Derrien</a></li>\n  <li>Network and C programming with <a href='https://people.irisa.fr/Simon.Rokicki/'>Simon Rokicki</a></li>\n  <li>Language theory and computability with Gilles Lesventes</li>\n  <li>Programming 1 in OCAML with <a href='http://www.lsv.fr/~baelde/'>David Baelde</a></li>\n  <li>Complementary mathematics: optimization with <a href='https://bhuguet.perso.math.cnrs.fr/enseignement.html'>Baptiste Huguet</a>.</li>\n  <li>Lebesgue integral</li>\n</ul>",
+  "syllabus.L3.sem2": "Second semester",
+  "syllabus.L3.sem2.desc": "<ul>\n  <li>Algorithmics 2 with <a href='https://people.irisa.fr/Francois.Schwarzentruber/'>François Schwarzentruber</a></li>\n  <li>Probability and statistics with <a href='https://people.irisa.fr/Francois.Schwarzentruber/'>François Schwarzentruber</a></li>\n  <li>Complementary mathematics: algebra.</li>\n  <li>System architecture 2 with <a href='https://people.irisa.fr/Simon.Rokicki/'>Simon Rokicki</a></li>\n  <li>Cryptography with <a href='https://langloi227.users.greyc.fr/'>Adeline Roux-Langlois</a></li>\n  <li>Image processing with <a href='http://www.emmanuelcaruyer.com'>Emmanuel Caruyer</a></li>\n  <li>Logic with <a href='http://www.lsv.fr/~baelde/'>David Baelde</a></li>\n  <li>Object programming with C with <a href='https://people.irisa.fr/Martin.Quinson/'>Martin Quinson</a></li>\n</ul>"
+}
