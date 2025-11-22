@@ -12,18 +12,43 @@
 		<div class="container">
 			<a class="brand" href="index.html">Decosse Adrien</a>
 			<nav class="nav" aria-label="Main navigation">
-				<a href="index.html">Accueil</a>
-				<a href="syllabus.html">Syllabus</a>
-				<a href="cours/index.html">Cours</a>
-				<a href="riichi.html">Riichi</a>
-				<a href="croco.html">Crocoloop</a>
+				<a href="index.html" data-i18n="nav.home"></a>
+				<a href="syllabus.html" data-i18n="nav.syllabus"></a>
+				<a href="cours/index.html" data-i18n="nav.cours"></a>
+				<a href="riichi.html" data-i18n="nav.riichi"></a>
+				<a href="croco.html" data-i18n="nav.croco"></a>
+				<a id="cv-download" href="Decosse_Adrien_CV.pdf" download data-i18n="nav.cv"></a>
+				<span style="margin-left:12px">
+					<a href="#" class="lang-toggle" data-lang="fr">FR</a>
+					<span style="opacity:0.6; margin:0 6px">|</span>
+					<a href="#" class="lang-toggle" data-lang="en">EN</a>
+				</span>
 			</nav>
 		</div>
 	</header>
 
 	<main class="container">
 		<section class="main-card">
-			<div id="contenu-markdown" class="markdown-content"></div>
+			<h1 data-i18n="syllabus.title"></h1>
+
+			<h2 data-i18n="syllabus.M2"></h2>
+			<h3 data-i18n="syllabus.M2.sem1"></h3>
+			<div data-i18n="syllabus.M2.sem1.desc"></div>
+
+			<h2 data-i18n="syllabus.agreg"></h2>
+			<div data-i18n="syllabus.agreg.desc" data-i18n-html></div>
+
+			<h2 data-i18n="syllabus.M1"></h2>
+			<h3 data-i18n="syllabus.M1.sem1"></h3>
+			<div data-i18n="syllabus.M1.sem1.desc" data-i18n-html></div>
+			<h3 data-i18n="syllabus.M1.sem2"></h3>
+			<div data-i18n="syllabus.M1.sem2.desc" data-i18n-html></div>
+
+			<h2 data-i18n="syllabus.L3"></h2>
+			<h3 data-i18n="syllabus.L3.sem1"></h3>
+			<div data-i18n="syllabus.L3.sem1.desc" data-i18n-html></div>
+			<h3 data-i18n="syllabus.L3.sem2"></h3>
+			<div data-i18n="syllabus.L3.sem2.desc" data-i18n-html></div>
 		</section>
 	</main>
 
@@ -33,56 +58,6 @@
 		</div>
 	</footer>
 
-	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-	<script>
-		// Render the syllabus content (markdown -> HTML) inside the page.
-		const contenuMarkdown = `# My Syllabus
-
-## M2
-### First semester
-
-## Agregation
-The syllabus is the 2025 french academic programme of
-- [High School](./agreg/Terminal.pdf)
-- [MPI](./agreg/MPI.pdf)
-- [Licence](./agreg/Licence.pdf)
-
-## M1
-### First semester
-- Advanced operating systems with [Isabelle Puaut](https://team.inria.fr/pacap/members/isabelle-puaut/)
-- Complexity theory with [François Schwarzentruber](https://people.irisa.fr/Francois.Schwarzentruber/)
-- Software formal analysis and design with [Thomas Genet](http://people.irisa.fr/Thomas.Genet/)
-- Digital sobriety with [Olivier Ridoux](http://www.irisa.fr/lande/ridoux/page.pro.e.html)
-- Signal processing with [Nicolas Keriven](https://nkeriven.github.io/)
-### Second semester
-- Information theory and coding with [Eric Fabre](http://people.rennes.inria.fr/Eric.Fabre/)
-- General compiler concepts with [Simon Rokicki](https://people.irisa.fr/Simon.Rokicki/)
-- Machine learning with [Ewa Kijak](http://people.irisa.fr/Ewa.Kijak)
-- Computer graphics with [Marc Christie](https://people.irisa.fr/Marc.Christie/)
-- Epistemology with [Filipe Drapeau-Contim](https://philo.univ-rennes.fr/interlocuteurs/filipe-drapeau-vieira-contim)
-
-## L3
-### First semester
-- Algorithmic 1 with [François Schwarzentruber](https://people.irisa.fr/Francois.Schwarzentruber/)
-- System architecture 1 with [Steven Derrien](https://people.irisa.fr/Steven.Derrien/wordpress)
-- Network and C programming with [Simon Rokicki](https://people.irisa.fr/Simon.Rokicki/)
-- Language theory and computability with [Gilles Lesventes]()
-- Programming 1 in OCAML with [David Baelde](http://www.lsv.fr/~baelde/)
-- Complementary math: optimization with [Baptiste Huguet](https://bhuguet.perso.math.cnrs.fr/enseignement.html)
-- Lebesgue's integral
-
-### Second semester
-- Algorithmic 2 with [François Schwarzentruber](https://people.irisa.fr/Francois.Schwarzentruber/)
-- Probability and statistics with [François Schwarzentruber](https://people.irisa.fr/Francois.Schwarzentruber/)
-- Complementary math: algebra
-- System architecture 2 with [Simon Rokicki](https://people.irisa.fr/Simon.Rokicki/)
-- Cryptography with [Adeline Roux-Langlois](https://langloi227.users.greyc.fr/)
-- Image processing with [Emmanuel Caruyer](http://www.emmanuelcaruyer.com)
-- Logic with [David Baelde](http://www.lsv.fr/~baelde/)
-- Object programming with C with [Martin Quinson](https://people.irisa.fr/Martin.Quinson/)
-`;
-
-		document.getElementById('contenu-markdown').innerHTML = marked.parse(contenuMarkdown);
-	</script>
+	<script src="assets/i18n.js"></script>
 </body>
 </html>

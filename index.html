@@ -15,13 +15,17 @@
       <div class="container">
         <a class="brand" href="index.html">Decosse Adrien</a>
         <nav class="nav" aria-label="Main navigation">
-          <a href="index.html">Accueil</a>
-          <a href="syllabus.html">Syllabus</a>
-          <a href="cours/index.html">Cours</a>
-          <a href="riichi.html">Riichi</a>
-          <a href="croco.html">Crocoloop</a>
-          <!-- Lien direct pour télécharger le CV pré-généré -->
-          <a id="cv-download" href="Decosse_Adrien_CV.pdf" download>CV</a>
+          <a href="index.html" data-i18n="nav.home"></a>
+          <a href="syllabus.html" data-i18n="nav.syllabus"></a>
+          <a href="cours/index.html" data-i18n="nav.cours"></a>
+          <a href="riichi.html" data-i18n="nav.riichi"></a>
+          <a href="croco.html" data-i18n="nav.croco"></a>
+          <a id="cv-download" href="Decosse_Adrien_CV.pdf" download data-i18n="nav.cv"></a>
+          <span style="margin-left:12px">
+            <a href="#" class="lang-toggle" data-lang="fr">FR</a>
+            <span style="opacity:0.6; margin:0 6px">|</span>
+            <a href="#" class="lang-toggle" data-lang="en">EN</a>
+          </span>
         </nav>
       </div>
     </header>
@@ -29,18 +33,18 @@
     <main class="container layout">
       <aside class="profile-card">
         <a href="EasterEggs/pacman.html"><img src="Photo_Profil.jpg" alt="Photo de profil"></a>
-        <h2>Adrien Decosse</h2>
-        <div class="meta">Étudiant en informatique — ENS Rennes</div>
+        <h2>Decosse Adrien</h2>
+        <div class="meta" data-i18n="home.pres.desc"></div>
 
         <ul class="contact-list">
-          <li><strong>Téléphone:</strong> +33 7 66 77 28 79</li>
-          <li><strong>E-mail:</strong> <a href="mailto:adrien.decosse@ens-rennes.fr">adrien.decosse@ens-rennes.fr</a></li>
-          <li><strong>GitHub Pro:</strong> <a href="https://github.com/decosse-adrien">Decosse Adrien</a></li>
-          <li><strong>GitHub:</strong> <a href="https://github.com/Didictateur">Didictateur</a></li>
+          <li><strong data-i18n="home.pres.tel"></strong>: +33 7 66 77 28 79</li>
+          <li><strong data-i18n="home.pres.mail"></strong>: <a href="mailto:adrien.decosse@ens-rennes.fr">adrien.decosse@ens-rennes.fr</a></li>
+          <li><strong data-i18n="home.pres.github.pro"></strong>: <a href="https://github.com/decosse-adrien">Decosse Adrien</a></li>
+          <li><strong data-i18n="home.pres.github.perso"></strong>: <a href="https://github.com/Didictateur">Didictateur</a></li>
         </ul>
 
         <div class="skills">
-          <h3>Compétences</h3>
+          <h3 data-i18n="home.pres.competences"></h3>
 
           <ul class="skill-list">
             <li class="skill">
@@ -120,53 +124,52 @@
       </aside>
 
       <section class="main-card">
-        <h1>Présentation</h1>
+        <h1 data-i18n="home.presentation.title"></h1>
 
         <div class="section">
-          <h2>Cursus scolaire</h2>
+          <h2 data-i18n="home.presentation.cursus"></h2>
           <ul>
-            <li><strong>Année 2022-2024:</strong>
-              <p>L3 et M1 dans le cursus informatique de l'<a href="https://www.ens-rennes.fr/">ENS Rennes</a>. Les cours suivis lors de ce cursus sont présentés dans ce <a href="syllabus.html">syllabus</a>.</p>
+            <li><strong data-i18n="home.presentation.années"> 2022-2024:</strong>
+              <p data-i18n="home.presentation.ens" data-i18n-html></p>
             </li>
-            <li><strong>Année 2019-2022:</strong>
-              <p>Trois années en classe préparatoire au lycée <a href="https://lycee-champollion.fr/">Champollion</a>, dont deux fois en MP* et dans le groupe TD X-ENS.</p>
+            <li><strong data-i18n="home.presentation.années"> 2019-2022:</strong>
+              <p data-i18n="home.presentation.prepa" data-i18n-html></p>
             </li>
-            <li><strong>Année 2019:</strong>
-              <p>Après des études au collège-lycée <a href="https://www.la-favorite.org/">La Favorite</a>, j'obtiens le BAC S mention BIEN.</p>
+            <li><strong data-i18n="home.presentation.année"> 2019:</strong>
+              <p data-i18n="home.presentation.lycee" data-i18n-html></p>
             </li>
           </ul>
         </div>
 
         <div class="section">
-          <h2>Expériences</h2>
+          <h2 data-i18n="home.presentation.experience"></h2>
           <ul>
-            <li><strong>Travaux dans une équipe de recherche:</strong>
-              <p>Durant l'été 2023, j'ai effectué un stage de deux mois au sein de l'équipe <a href="https://www.inria.fr/en/elan">Elan</a> de l'Inria à Grenoble. J'ai eu la possibilité de travailler quotidiennement avec des doctorants.</p>
-              <p>Durant toute l'année scolaire 2023-2024, j'ai étroitement travaillé avec l'équipe <a href="https://www.inria.fr/en/diverse">Diverse</a> de l'Inria à Rennes avec qui j'ai eu la possibilité de monter un projet.</p>
+            <li><strong data-i18n="home.presentation.stage.title"></strong>
+              <p data-i18n="home.presentation.stage.desc" data-i18n-html></p>
             </li>
-            <li><strong>Concours:</strong>
-              <p>J'ai participé aux concours généraux de mathématiques, de physique et de SVT en 2019. En 2018, j'ai été classé 25ième régional aux olympiades de mathématiques. En 2019, j'ai obtenu la deuxième place à un concours d'éloquence organisé par mon lycée.</p>
+            <li><strong data-i18n="home.presentation.concours.title"></strong>
+              <p data-i18n="home.presentation.concours.desc"></p>
             </li>
-            <li><strong>Cours externes:</strong>
-              <p>Entre 2018 et 2019, j'ai assisté à des cours de mathématiques donnés par l'<a href="https://www.ens-lyon.fr">ENS Lyon</a> le dimanche de 8h à 14h. J'ai également donné des cours bénévolement à des collégiens.</p>
+            <li><strong data-i18n="home.presentation.cours.title"></strong>
+              <p data-i18n="home.presentation.cours.desc" data-i18n-html></p>
             </li>
-            <li><strong>Autres:</strong>
-              <p>Durant le collège, j'ai obtenu le brevet d'initiation aéronautique (2016) et assisté à diverses conférences scientifiques. J'ai aussi effectué un stage d'un mois au sein de l'entreprise <a href="https://www.climb-up.fr/">Climb Up</a>.</p>
+            <li><strong data-i18n="home.presentation.autres.titles"></strong>
+              <p data-i18n="home.presentation.autres.desc" data-i18n-html></p>
             </li>
           </ul>
         </div>
 
         <div class="section">
-          <h2>Intérêts culturels</h2>
+          <h2 data-i18n="home.presentation.cultures.title"></h2>
           <ul>
-            <li><strong>Théâtre:</strong>
-              <p>J'ai grandi dans le monde du théâtre — ~10 ans d'expérience avant la prépa. À l'ENS Rennes, j'ai joué et chanté dans la comédie musicale et dans la chorale; je suis actuellement responsable de la comédie musicale et président de la chorale. <a id="easteregg" href="https://fr.wiktionary.org/wiki/feur">Quoi</a> que l'on me dise, mon auteur préféré est Samuel Beckett.</p>
+            <li><strong data-i18n="home.presentation.cultures.theatre.title"></strong>
+              <p data-i18n="home.presentation.cultures.theatre.desc" data-i18n-html></p>
             </li>
-            <li><strong>Sport:</strong>
-              <p>Pratique d'activités de haute-montagne : escalade, alpinisme, ski, etc.</p>
+            <li><strong data-i18n="home.presentation.cultures.sport.title"></strong>
+              <p data-i18n="home.presentation.cultures.sport.desc"></p>
             </li>
-            <li><strong>Jeux indés préférés:</strong>
-              <p>Outer Wilds, Undertale, Tunic, Fez, The Moonstone Equation.</p>
+            <li><strong data-i18n="home.presentation.cultures.jeux.title"></strong>
+              <p data-i18n="home.presentation.cultures.jeux.desc"></p>
             </li>
           </ul>
         </div>
@@ -176,9 +179,10 @@
 
     <footer class="footer">
       <div class="container">
-        <small class="muted">© Adrien Decosse — site personnel</small>
+        <small class="muted" data-i18n="license"></small>
       </div>
     </footer>
+    <script src="assets/i18n.js"></script>
   </body>
 </html>
 
