@@ -22,7 +22,8 @@
   "project.chess.title": "ChessNut",
   "project.chess.desc": "Jeu en ligne et autohébergeable d'une variante des échecs avec des cartes Action.",
 
-  "home.pres.desc": "Étudiant en informatique - ENS Rennes",
+  "home.pres.desc.agreg": "Agrégé d'informatique",
+  "home.pres.desc.etude": "Étudiant en informatique - ENS Rennes",
   "home.pres.tel": "Téléphone",
   "home.pres.mail": "E-mail",
   "home.pres.github.pro": "GitHub pro",
